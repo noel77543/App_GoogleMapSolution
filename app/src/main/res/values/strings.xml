@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">T_57_GoogleMap_Solution</string>
+    <string name="title_activity_maps">Map</string>
+
+    <!--地標-->
+    <string name="westvirginia">西維吉尼亞州</string>
+    <string name="kingstontownship">俄亥俄州</string>
+    <string name="springtownship">宾夕法尼亚州</string>
+    <string name="kentucky">肯塔基州</string>
+    <string name="indiana">印第安納州</string>
+    <string name="virginia">弗吉尼亞州</string>
+    <string name="maryland">馬里蘭州</string>
+    <string name="newjersey">新澤西州</string>
+    <string name="connecticut">康乃狄克州</string>
+    <string name="northcarolina">北卡羅來納州</string>
+    <string name="southcarolina">南卡羅來納州</string>
+    <string name="georgia">喬治亞州</string>
+    <string name="here">『 I`m Here ! 』</string>
+    <string name="map_latitude">緯度：</string>
+    <string name="map_longitude">經度：</string>
+</resources>
