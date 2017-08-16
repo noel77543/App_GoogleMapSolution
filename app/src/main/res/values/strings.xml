@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">T_57_GoogleMap_Solution</string>
+    <string name="app_name">Android-GoogleMap_Solution</string>
     <string name="title_activity_maps">Map</string>
 
     <!--地標-->

@@ -23,6 +23,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -460,10 +461,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //但若是版本在6.0以前的會只要有在Manifest加入權限即可直接執行,不影響程式進行
     private void checkPermissionsForResult() {
         Log.e("startcheck", "startcheck");
-        final int PERMISSION_ACCESS_FINE_LOCATION = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        final int PERMISSION_ACCESS_COARSE_LOCATION = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        final int PERMISSION_ACCESS_FINE_LOCATION = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
+        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION);
         //欲申請的權限
-        String[] locationPermissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] locationPermissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION};
 //        已擁有權限－PERMISSION_GRANTED
 //        代表應用程式目前已獲得使用者允許使用該權限。
 //
