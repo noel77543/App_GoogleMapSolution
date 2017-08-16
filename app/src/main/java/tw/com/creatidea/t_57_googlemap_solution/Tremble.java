@@ -5,7 +5,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
- * Created by Administrator on 2016/12/7.
+ * Created by noel on 2017/8/16.
  */
 
 public class Tremble extends Animation {

@@ -9,7 +9,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
 /**
- * Created by noel on 2017/4/12.
+ * Created by noel on 2017/8/16.
  */
 
 public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter{

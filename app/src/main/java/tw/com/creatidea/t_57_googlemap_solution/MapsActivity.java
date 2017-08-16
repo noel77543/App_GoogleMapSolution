@@ -2,15 +2,20 @@ package tw.com.creatidea.t_57_googlemap_solution;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.Service;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -18,9 +23,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -41,21 +48,42 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.kml.KmlLayer;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static android.content.pm.PackageManager.PERMISSION_DENIED;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
+import tw.com.creatidea.t_57_googlemap_solution.util.HttpHandler;
+
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
+
+/**
+ * Created by noel on 2017/8/16.
+ */
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         , GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
-    //6.0 版本後 需要權限
-    final int LOCATION_PERMISSION_REQUEST = 33;//精確位置
 
+    //TODO 6.0 版本後 需要權限
+    final int LOCATION_PERMISSION_REQUEST = 33;
 
-    // TODO: 2017/6/29 裝置位置用 
+    // TODO 裝置位置用
     // Google API用戶端物件
     private GoogleApiClient googleApiClient;
     // Location請求物件
@@ -69,8 +97,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng here;
     private Bitmap myIcon;
 
-    //// TODO: 2017/6/29 地標連線用 
+    //// TODO 地標線條
     private GoogleMap mMap;
+
     //判斷第幾點
     boolean count = true;
     PolylineOptions polylineOpt;
@@ -81,14 +110,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Tremble tremble;
     private FrameLayout map;
     //    地標LatLng
-    private LatLng WestVirginia, KingstonTownship, SpringTownship, Kentucky, Indiana,
-            Virginia, Maryland, NewJersey, Connecticut, NorthCarolina, SouthCarolina, Georgia;
+    private LatLng westVirginia, kingstonTownship, springTownship, kentucky, indiana,
+            virginia, maryland, newJersey, connecticut, northCarolina, southCarolina, georgia;
+
+    //地址
+    private final String ADDRESS_URL = "http://maps.google.com/maps/api/geocode/json?latlng={0},{1}&language=zh-TW&sensor=true";
+    private ProgressDialog progressDialog;
+    private String searchAddress;
+
+
+    private GoogleConnect connect;
+
+
+    //  UI
+    // butterknife
+    @BindView(R.id.edit)
+    EditText edit;
+    @BindView(R.id.btnSearch)
+    Button btnSearch;
+    @BindView(R.id.btnFocus)
+    Button btnFocus;
+    @BindView(R.id.btnReload)
+    Button btnReload;
+
+
 //             ================           ==================              ================
+    //TODO 如若無法使用此範例原因有以下幾點可能
+
+    /**
+     * 請更改values 資料夾底下的google_,aps_api.xml中的金鑰
+     * 請開啟手機的定位功能
+     * 請給予App地理位置資訊之權限
+     */
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        ButterKnife.bind(this);
+        EventBus.getDefault().register(this);
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -99,41 +161,78 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         checkPermissionsForResult();
+    }
+//             ================           ==================              ================
+
+    private void init() {
+
+        progressDialog = new ProgressDialog(this);
+        connect = new GoogleConnect(this);
+    }
 
 
+//             ================           ==================              ================
+
+    @OnClick({R.id.btnSearch, R.id.btnFocus, R.id.btnReload})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btnSearch:
+
+                searchAddress = edit.getText().toString();
+
+                if (searchAddress.length() > 0) {
+                    progressDialog.setMessage(getString(R.string.text_connect));
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    connect.sendLocationRequest(searchAddress);
+                } else {
+                    Toast.makeText(this, getString(R.string.toast_enteraddress), Toast.LENGTH_SHORT).show();
+                }
+                closeKeyboard();//關閉Keyboard
+
+                break;
+            case R.id.btnFocus:
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 16.0f));
+
+                break;
+            case R.id.btnReload:
+                checkPermissionsForResult();
+
+                break;
+        }
     }
 
 //             ================           ==================              ================
 
-    private void addLandMarks() {
-        landMark(WestVirginia, getString(R.string.westvirginia));
-        landMark(KingstonTownship, getString(R.string.kingstontownship));
-        landMark(SpringTownship, getString(R.string.springtownship));
-        landMark(Kentucky, getString(R.string.kentucky));
-        landMark(Indiana, getString(R.string.indiana));
-        landMark(Virginia, getString(R.string.virginia));
-        landMark(Maryland, getString(R.string.maryland));
-        landMark(NewJersey, getString(R.string.newjersey));
-        landMark(Connecticut, getString(R.string.connecticut));
-        landMark(NorthCarolina, getString(R.string.northcarolina));
-        landMark(SouthCarolina, getString(R.string.southcarolina));
-        landMark(Georgia, getString(R.string.georgia));
+    private void addLandMarks() {//插入大頭針
+        landMark(westVirginia, getString(R.string.westvirginia));
+        landMark(kingstonTownship, getString(R.string.kingstontownship));
+        landMark(springTownship, getString(R.string.springtownship));
+        landMark(kentucky, getString(R.string.kentucky));
+        landMark(indiana, getString(R.string.indiana));
+        landMark(virginia, getString(R.string.virginia));
+        landMark(maryland, getString(R.string.maryland));
+        landMark(newJersey, getString(R.string.newjersey));
+        landMark(connecticut, getString(R.string.connecticut));
+        landMark(northCarolina, getString(R.string.northcarolina));
+        landMark(southCarolina, getString(R.string.southcarolina));
+        landMark(georgia, getString(R.string.georgia));
     }
 //             ================           ==================              ================
 
     private void initLandMarks() {
-        WestVirginia = new LatLng(38.495601, -81.062688);//西維吉尼亞州   (中心點)
-        KingstonTownship = new LatLng(40.303698, -82.864446);//俄亥俄州
-        SpringTownship = new LatLng(40.895947, -77.678899); //宾夕法尼亚州
-        Kentucky = new LatLng(37.404066, -85.017766); //肯塔基州
-        Indiana = new LatLng(40.199779, -86.291650); //印第安納州
-        Virginia = new LatLng(37.275022, -78.895902);//弗吉尼亞州
-        Maryland = new LatLng(39.512846, -77.053545);//馬里蘭州
-        NewJersey = new LatLng(39.614297, -74.711120);//新澤西州
-        Connecticut = new LatLng(41.651353, -72.816124);//康乃狄克州
-        NorthCarolina = new LatLng(35.684099, -78.964883);//北卡羅來納州
-        SouthCarolina = new LatLng(33.961673, -80.529731);//南卡羅來納州
-        Georgia = new LatLng(32.614273, -83.327651);//喬治亞州
+        westVirginia = new LatLng(38.495601, -81.062688);//西維吉尼亞州   (中心點)
+        kingstonTownship = new LatLng(40.303698, -82.864446);//俄亥俄州
+        springTownship = new LatLng(40.895947, -77.678899); //宾夕法尼亚州
+        kentucky = new LatLng(37.404066, -85.017766); //肯塔基州
+        indiana = new LatLng(40.199779, -86.291650); //印第安納州
+        virginia = new LatLng(37.275022, -78.895902);//弗吉尼亞州
+        maryland = new LatLng(39.512846, -77.053545);//馬里蘭州
+        newJersey = new LatLng(39.614297, -74.711120);//新澤西州
+        connecticut = new LatLng(41.651353, -72.816124);//康乃狄克州
+        northCarolina = new LatLng(35.684099, -78.964883);//北卡羅來納州
+        southCarolina = new LatLng(33.961673, -80.529731);//南卡羅來納州
+        georgia = new LatLng(32.614273, -83.327651);//喬治亞州
     }
 //             ================           ==================              ================
 
@@ -182,7 +281,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             polylineOpt = new PolylineOptions();//重建一個新的polylineOpt
         }
 
-        return false; //true 則只觸發自定義行為（會不包含鏡頭轉移）
+        return false; //true 則只觸發自定義行為（會不包含鏡頭轉移及infoWindow也不會出現）
     }
 //             ================           ==================              ================
 
@@ -232,8 +331,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, MapsActivity.this);
 
         mMap.setMyLocationEnabled(true);//取得地圖上位置藍點及右上角準心按鈕
-//        mMap.getUiSettings().setMyLocationButtonEnabled(false);//隱藏準心按鈕
-
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);//隱藏準心按鈕
+        mMap.getUiSettings().setMapToolbarEnabled(false);//關閉點選Marker後右下角出現的工具列
         polylineOpt = new PolylineOptions();
         //線條顏色
         polylineOpt.color(Color.BLUE);
@@ -242,44 +341,38 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         initLandMarks();
         addLandMarks();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(WestVirginia, 6.0f));//鏡頭 以WestVirginia為中心
-        /**
-         * 更多Kml相關用法在以下網址
-         * http://googlemaps.github.io/android-maps-utils/
-         * https://developers.google.com/maps/documentation/android-api/utility/kml?hl=zh-tw
-         * */
-
-
-        /**以下用於 地址轉經緯度
-         *Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
-         *try {
-         *    List<Address> address = geocoder.getFromLocationName("地址",1);
-         *    double latitude = address.get(0).getLatitude();
-         *    double longitude = address.get(0).getLongitude();
-         *    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude), 16.0f));//鏡頭 以該地址為中心
-         *} catch (IOException e) {
-         *    e.printStackTrace();
-         *    }
-         **/
-
-        /**而經緯度轉地址的部分
-         *   http://maps.google.com/maps/api/geocode/json?latlng=25.0519231,121.5496221&language=zh-TW&sensor=true
-         *   將經緯度帶入此API會回傳json
-         *   解析後即可取得所有該經緯度地址資訊
-         * */
-
-
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(westVirginia, 6.0f));//鏡頭 以WestVirginia為中心
         mMap.setOnMarkerClickListener(this);    //地標點擊監聽
         mMap.setInfoWindowAdapter(new MyInfoAdapter(this));//資訊視窗樣式
         mMap.setOnInfoWindowClickListener(this);// 資訊視窗點擊監聽
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                Toast.makeText(MapsActivity.this, getString(R.string.map_latitude) + latLng.latitude + "\n" +
-                        getString(R.string.map_longitude) + latLng.longitude, Toast.LENGTH_SHORT).show();
+                progressDialog.setMessage(getString(R.string.text_connect));
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                connect.sendAddressRequest(ADDRESS_URL, latLng.latitude, latLng.longitude);
             }
         });
     }
+//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+
+    //EventBus
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onSuccessConnect(Map<String, Object> data) {
+        if ((int) data.get("type") == TYPE_ADDRESS) {
+            Toast.makeText(MapsActivity.this, (String) data.get("data"), Toast.LENGTH_SHORT).show();
+
+        } else if ((int) data.get("type") == TYPE_LOCATION) {
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((LatLng) data.get("data"), 16.0f));
+
+        }
+
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
+    }
+
 //             ================           ==================              ================
 
     @Override
@@ -322,11 +415,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //             ================           ==================              ================
 
     private void startConnectGoogleMapAPI() {
+        init();
         configGoogleApiClient();
         configLocationRequest();
         if (!googleApiClient.isConnected()) {
             googleApiClient.connect();
         }
+//        loadKML();
+    }
+
+//             ================           ==================              ================
+
+    /**
+     * 更多Kml相關用法在以下網址
+     * http://googlemaps.github.io/android-maps-utils/
+     * https://developers.google.com/maps/documentation/android-api/utility/kml?hl=zh-tw
+     */
+
+    private void loadKML() {
         try {
             KmlLayer layer = new KmlLayer(mMap, getAssets().open("testroute.kml"), this);
             layer.addLayerToMap();
@@ -338,9 +444,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-//             ================           ==================              ================
-
+    //             ================           ==================              ================
     // 建立Location請求物件
     private void configLocationRequest() {
         locationRequest = new LocationRequest();
@@ -350,58 +454,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setFastestInterval(1000);
         // 設定優先讀取高精確度的位置資訊（GPS）
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-//            ================           ==================              ================
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // 移除Google API用戶端連線
-        if (googleApiClient != null) {
-            if (googleApiClient.isConnected()) {
-                googleApiClient.disconnect();
-            }
-        }
-    }
-
-//             ================           ==================              ================
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        setUpMapIfNeeded();
-//         連線到Google API用戶端
-        if (googleApiClient != null) {
-            if (!googleApiClient.isConnected() && currentMarker != null) {
-                startConnectGoogleMapAPI();
-            }
-        }
-    }
-//             ================           ==================              ================
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // 移除位置請求服務
-        if (googleApiClient != null) {
-            if (googleApiClient.isConnected()) {
-                LocationServices.FusedLocationApi.removeLocationUpdates(
-                        googleApiClient, this);
-            }
-        }
-
-    }
-//             ================           ==================              ================
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // 移除Google API用戶端連線
-        if (googleApiClient != null) {
-            if (googleApiClient.isConnected()) {
-                googleApiClient.disconnect();
-            }
-        }
     }
 
     //   todo android 6.0後要權限          ================           ==================              ================
@@ -424,25 +476,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //如果在系統未給予此APP權限
         if (PERMISSION_ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED && PERMISSION_ACCESS_COARSE_LOCATION == PackageManager.PERMISSION_DENIED) {
             //申請權限
-            //雖然要申請的全縣有FINE跟COURSE兩者,但是這裡僅是為了判斷權限是否具有而做出下面敘述句行為所以只需要提一個就好,以節省coding字數
             if (ActivityCompat.shouldShowRequestPermissionRationale(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                //敘述句擺入要求的權限,在locationPermissions此String[]中並進行提交
-                ActivityCompat.requestPermissions(MapsActivity.this,locationPermissions,LOCATION_PERMISSION_REQUEST);
-
-                Log.e("allow", "allow");
-            }else {
-                AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-                alert.setMessage("需要地理位置資訊權限,是否前往設定？");
-                alert.setPositiveButton("前往", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + MapsActivity.this.getPackageName()));
-                        settings.addCategory(Intent.CATEGORY_DEFAULT);
-                        settings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(settings);
-                    }
-                });
-                alert.show();
+                ActivityCompat.requestPermissions(MapsActivity.this, locationPermissions, LOCATION_PERMISSION_REQUEST);
+            } else {
+                goToSettingPermissions();
             }
         } else {//如果已至系統給予權限
             startConnectGoogleMapAPI();
@@ -483,4 +520,82 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 //             ================           ==================              ================
 
+    private void goToSettingPermissions() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
+        alert.setMessage("前往設定權限？");
+        alert.setPositiveButton("前往", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + MapsActivity.this.getPackageName()));
+                settings.addCategory(Intent.CATEGORY_DEFAULT);
+                settings.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(settings);
+            }
+        });
+        alert.show();
+    }
+
+    //  ========================================  ========================================  ========================================
+    private void closeKeyboard() { //關閉虛擬鍵盤
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+//            ================           ==================              ================
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // 移除Google API用戶端連線
+        if (googleApiClient != null) {
+            if (googleApiClient.isConnected()) {
+                googleApiClient.disconnect();
+            }
+        }
+        EventBus.getDefault().unregister(this);
+
+    }
+
+//             ================           ==================              ================
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        setUpMapIfNeeded();
+//         連線到Google API用戶端
+        if (googleApiClient != null) {
+            if (!googleApiClient.isConnected() && currentMarker != null) {
+                startConnectGoogleMapAPI();
+            }
+        }
+    }
+//             ================           ==================              ================
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 移除位置請求服務
+        if (googleApiClient != null) {
+            if (googleApiClient.isConnected()) {
+                LocationServices.FusedLocationApi.removeLocationUpdates(
+                        googleApiClient, this);
+            }
+        }
+    }
+
+    //             ================           ==================              ================
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // 移除Google API用戶端連線
+        if (googleApiClient != null) {
+            if (googleApiClient.isConnected()) {
+                googleApiClient.disconnect();
+            }
+        }
+    }
 }
