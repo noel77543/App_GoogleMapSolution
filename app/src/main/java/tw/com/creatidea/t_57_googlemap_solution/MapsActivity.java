@@ -11,11 +11,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.provider.Settings;
@@ -52,26 +49,20 @@ import com.google.maps.android.kml.KmlLayer;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
-import tw.com.creatidea.t_57_googlemap_solution.util.HttpHandler;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
+import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.ADDRESS_API;
+import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_LOCATION;
 
 /**
  * Created by noel on 2017/8/16.
@@ -81,8 +72,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         , GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
+    //第一次開起的時候鏡頭轉向自己
+    private boolean isStart = true;
+
     //TODO 6.0 版本後 需要權限
-    final int LOCATION_PERMISSION_REQUEST = 33;
+    private final int LOCATION_PERMISSION_REQUEST = 33;
 
     // TODO 裝置位置用
     // Google API用戶端物件
@@ -95,8 +89,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker currentMarker;
     //客製化marker
     private MarkerOptions m = new MarkerOptions();
-    private LatLng here;
-    private Bitmap myIcon;
+    private LatLng currentLatlng;
+    private Bitmap currentIcon;
 
     //// TODO 地標線條
     private GoogleMap mMap;
@@ -110,12 +104,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //    特效
     private Tremble tremble;
     private FrameLayout map;
-    //    地標LatLng
-    private LatLng westVirginia, kingstonTownship, springTownship, kentucky, indiana,
-            virginia, maryland, newJersey, connecticut, northCarolina, southCarolina, georgia;
 
     //地址
-    private final String ADDRESS_URL = "http://maps.google.com/maps/api/geocode/json?latlng={0},{1}&language=zh-TW&sensor=true";
     private ProgressDialog progressDialog;
     private String searchAddress;
 
@@ -193,7 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 break;
             case R.id.btnFocus:
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 16.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatlng, 16.0f));
 
                 break;
             case R.id.btnReload:
@@ -205,39 +195,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 //             ================           ==================              ================
 
-    private void addLandMarks() {//插入大頭針
-        landMark(westVirginia, getString(R.string.westvirginia));
-        landMark(kingstonTownship, getString(R.string.kingstontownship));
-        landMark(springTownship, getString(R.string.springtownship));
-        landMark(kentucky, getString(R.string.kentucky));
-        landMark(indiana, getString(R.string.indiana));
-        landMark(virginia, getString(R.string.virginia));
-        landMark(maryland, getString(R.string.maryland));
-        landMark(newJersey, getString(R.string.newjersey));
-        landMark(connecticut, getString(R.string.connecticut));
-        landMark(northCarolina, getString(R.string.northcarolina));
-        landMark(southCarolina, getString(R.string.southcarolina));
-        landMark(georgia, getString(R.string.georgia));
-    }
-//             ================           ==================              ================
-
-    private void initLandMarks() {
-        westVirginia = new LatLng(38.495601, -81.062688);//西維吉尼亞州   (中心點)
-        kingstonTownship = new LatLng(40.303698, -82.864446);//俄亥俄州
-        springTownship = new LatLng(40.895947, -77.678899); //宾夕法尼亚州
-        kentucky = new LatLng(37.404066, -85.017766); //肯塔基州
-        indiana = new LatLng(40.199779, -86.291650); //印第安納州
-        virginia = new LatLng(37.275022, -78.895902);//弗吉尼亞州
-        maryland = new LatLng(39.512846, -77.053545);//馬里蘭州
-        newJersey = new LatLng(39.614297, -74.711120);//新澤西州
-        connecticut = new LatLng(41.651353, -72.816124);//康乃狄克州
-        northCarolina = new LatLng(35.684099, -78.964883);//北卡羅來納州
-        southCarolina = new LatLng(33.961673, -80.529731);//南卡羅來納州
-        georgia = new LatLng(32.614273, -83.327651);//喬治亞州
-    }
-//             ================           ==================              ================
-
-    private void landMark(LatLng myPostion, String myTitle) {
+    private void markFactory(LatLng myPostion, String myTitle) {
         Bitmap myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.myicon);
         mMap.addMarker(new MarkerOptions()
                 .position((myPostion))
@@ -302,15 +260,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             myLongitude = location.getLongitude();    //取得經度
             myLatitude = location.getLatitude();    //取得緯度
-            here = new LatLng(myLatitude, myLongitude);
-            myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_here);
-            m.position(here).anchor(0.5f, 0.9f).icon(BitmapDescriptorFactory.fromBitmap(myIcon)).title(getString(R.string.here));
+            currentLatlng = new LatLng(myLatitude, myLongitude);
+            if (isStart) {
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatlng, 16.0f));//鏡頭 以WestVirginia為中心
+                isStart = false;
+            }
+            currentIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_here);
+            m.position(currentLatlng).anchor(0.5f, 0.9f).icon(BitmapDescriptorFactory.fromBitmap(currentIcon)).title(getString(R.string.here));
             // 設定目前位置的標記
             if (currentMarker == null) {//剛開啟的第一次add mark
                 currentMarker = mMap.addMarker(m);
                 Log.e("is null", "is null");
             } else { //此後都跑這裡
-                currentMarker.setPosition(here);//每一次位置改變都會跑進來這裡取得新的Latlng座標位置,這裡直接將此Marker的位置指定給新的地理位置
+                currentMarker.setPosition(currentLatlng);//每一次位置改變都會跑進來這裡取得新的Latlng座標位置,這裡直接將此Marker的位置指定給新的地理位置
                 Log.e("not null", "not null");
             }
         } else {
@@ -340,9 +302,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         //線條寬度
         polylineOpt.width(8f);
 
-        initLandMarks();
-        addLandMarks();
-        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(westVirginia, 6.0f));//鏡頭 以WestVirginia為中心
         mMap.setOnMarkerClickListener(this);    //地標點擊監聽
         mMap.setInfoWindowAdapter(new MyInfoAdapter(this));//資訊視窗樣式
         mMap.setOnInfoWindowClickListener(this);// 資訊視窗點擊監聽
@@ -352,7 +311,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 progressDialog.setMessage(getString(R.string.text_connect));
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                connect.sendAddressRequest(ADDRESS_URL, latLng.latitude, latLng.longitude);
+                connect.sendAddressRequest(ADDRESS_API, latLng.latitude, latLng.longitude);
             }
         });
     }
@@ -462,9 +421,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void checkPermissionsForResult() {
         Log.e("startcheck", "startcheck");
         final int PERMISSION_ACCESS_FINE_LOCATION = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
-        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this,android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
         //欲申請的權限
-        String[] locationPermissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] locationPermissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
 //        已擁有權限－PERMISSION_GRANTED
 //        代表應用程式目前已獲得使用者允許使用該權限。
 //

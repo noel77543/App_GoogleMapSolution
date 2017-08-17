@@ -4,7 +4,6 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -16,13 +15,12 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 
-import tw.com.creatidea.t_57_googlemap_solution.MapsActivity;
 import tw.com.creatidea.t_57_googlemap_solution.R;
-import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
+import tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter;
 import tw.com.creatidea.t_57_googlemap_solution.util.HttpHandler;
 
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
+import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_LOCATION;
 
 /**
  * Created by noel on 2017/8/16.
