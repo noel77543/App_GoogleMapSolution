@@ -2,19 +2,6 @@
     <string name="app_name">Android-GoogleMap_Solution</string>
     <string name="title_activity_maps">Map</string>
 
-    <!--地標-->
-    <string name="westvirginia">西維吉尼亞州</string>
-    <string name="kingstontownship">俄亥俄州</string>
-    <string name="springtownship">宾夕法尼亚州</string>
-    <string name="kentucky">肯塔基州</string>
-    <string name="indiana">印第安納州</string>
-    <string name="virginia">弗吉尼亞州</string>
-    <string name="maryland">馬里蘭州</string>
-    <string name="newjersey">新澤西州</string>
-    <string name="connecticut">康乃狄克州</string>
-    <string name="northcarolina">北卡羅來納州</string>
-    <string name="southcarolina">南卡羅來納州</string>
-    <string name="georgia">喬治亞州</string>
     <string name="here">『 I`m Here ! 』</string>
     <string name="map_latitude">緯度：</string>
     <string name="map_longitude">經度：</string>
@@ -27,8 +14,17 @@
     <string name="hint_edit">" "請輸入想搜尋的地址</string>
     <string name="text_connect">請稍候...</string>
 
-
-
     <!--api地址轉經緯度錯誤-->
     <string name="api_wrong">INVALID_REQUEST</string>
+
+
+    <!--權限alertdialog-->
+    <string name="permission_gotocheck">前往設定權限？</string>
+    <string name="permission_goahead">前往</string>
+
+    <!--spinner-->
+    <string name="direction_driving">行車路線</string>
+    <string name="direction_walking">步行路線</string>
+
+
 </resources>

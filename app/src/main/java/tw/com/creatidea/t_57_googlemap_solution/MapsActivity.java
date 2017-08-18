@@ -10,11 +10,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +25,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -42,13 +40,13 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
+
 import com.google.maps.android.kml.KmlLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -60,23 +58,20 @@ import butterknife.OnClick;
 import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.ADDRESS_API;
-import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_ADDRESS;
-import static tw.com.creatidea.t_57_googlemap_solution.eventcenter.EventCenter.TYPE_LOCATION;
+import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_GOOGLE_GEOCODE;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 
 /**
  * Created by noel on 2017/8/16.
  */
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
-        , GoogleMap.OnMarkerClickListener, GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks,
+        , GoogleMap.OnInfoWindowClickListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
-    //第一次開起的時候鏡頭轉向自己
-    private boolean isStart = true;
-
     //TODO 6.0 版本後 需要權限
-    private final int LOCATION_PERMISSION_REQUEST = 33;
+    final int LOCATION_PERMISSION_REQUEST = 33;
 
     // TODO 裝置位置用
     // Google API用戶端物件
@@ -89,26 +84,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Marker currentMarker;
     //客製化marker
     private MarkerOptions m = new MarkerOptions();
-    private LatLng currentLatlng;
-    private Bitmap currentIcon;
+    private LatLng here;
+    private Bitmap myIcon;
 
-    //// TODO 地標線條
     private GoogleMap mMap;
 
-    //判斷第幾點
-    boolean count = true;
-    PolylineOptions polylineOpt;
-    Polyline polyline;
     //    位置
     private Double myLongitude, myLatitude;
-    //    特效
-    private Tremble tremble;
-    private FrameLayout map;
+    private boolean isStart = true;
 
-    //地址
+    //點選的目標點位
+    private LatLng latLngTarget;
+    private Marker markerTarget;
+    private MarkerOptions optionsTarget = new MarkerOptions();
+
+
     private ProgressDialog progressDialog;
     private String searchAddress;
-
 
     private GoogleConnect connect;
 
@@ -125,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     Button btnReload;
 
 
-//             ================           ==================              ================
+    //-----------------------------
     //TODO 如若無法使用此範例原因有以下幾點可能
 
     /**
@@ -146,15 +138,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         checkPermissionsForResult();
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     private void init() {
 
         progressDialog = new ProgressDialog(this);
@@ -162,8 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-//             ================           ==================              ================
-
+    //-----------------------------
     @OnClick({R.id.btnSearch, R.id.btnFocus, R.id.btnReload})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -183,7 +174,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 break;
             case R.id.btnFocus:
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatlng, 16.0f));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 16.0f));
 
                 break;
             case R.id.btnReload:
@@ -193,65 +184,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-//             ================           ==================              ================
 
-    private void markFactory(LatLng myPostion, String myTitle) {
+    //-----------------------------
+    private void addTargetMarkerOnMap(LatLng myPostion, String myTitle) {
         Bitmap myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.myicon);
-        mMap.addMarker(new MarkerOptions()
+
+        if (markerTarget != null) {
+            markerTarget.remove();
+        }
+        markerTarget = mMap.addMarker(optionsTarget
                 .position((myPostion))
                 .title(myTitle)
                 .icon(BitmapDescriptorFactory.fromBitmap(myIcon))
                 .anchor(0.5f, 0.9f));
+
+        markerTarget.showInfoWindow();
     }
-//             ================           ==================              ================
 
-    private void setScreenTrembleAnimation() {
-        tremble = new Tremble();
-        tremble.setDuration(100);//每次時間
-        tremble.setRepeatCount(2);// 2+1次（包含第一次）
-    }
-//             ================           ==================              ================
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {//Mark 點擊監聽
-        map = (FrameLayout) findViewById(R.id.map);
-        setScreenTrembleAnimation();
-        Vibrator myVibrator = (Vibrator) getApplication().getSystemService(Service.VIBRATOR_SERVICE);
-        myVibrator.vibrate(300);
-        map.startAnimation(tremble);
-
-//        //線條顏色
-        polylineOpt.color(Color.BLUE);
-//        //線條寬度
-        polylineOpt.width(8f);
-        if (count) {
-            //從...
-            if (polyline != null) {
-                polyline.remove();
-            }
-            polylineOpt.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-            count = false;
-        } else {
-            //到...
-            polylineOpt.add(new LatLng(marker.getPosition().latitude, marker.getPosition().longitude));
-            count = true;
-            polyline = mMap.addPolyline(polylineOpt);
-            polyline.setWidth(10);
-            polylineOpt = new PolylineOptions();//重建一個新的polylineOpt
-        }
-
-        return false; //true 則只觸發自定義行為（會不包含鏡頭轉移及infoWindow也不會出現）
-    }
-//             ================           ==================              ================
-
+    //-----------------------------
     @Override
     public void onInfoWindowClick(Marker marker) {
         Toast.makeText(this, marker.getTitle() + "\n經度:" + marker.getPosition().longitude +
                         "\n緯度:" + marker.getPosition().latitude,
                 Toast.LENGTH_SHORT).show();
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     private void getLocation(Location location) {
 
         if (location != null) {
@@ -260,19 +219,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             myLongitude = location.getLongitude();    //取得經度
             myLatitude = location.getLatitude();    //取得緯度
-            currentLatlng = new LatLng(myLatitude, myLongitude);
+            here = new LatLng(myLatitude, myLongitude);
+
+            //放一個boolean做判斷若是開開啟app會將鏡頭聚焦到自己的位置上
             if (isStart) {
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatlng, 16.0f));//鏡頭 以WestVirginia為中心
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(here, 16.0f));//鏡頭 以WestVirginia為中心
                 isStart = false;
             }
-            currentIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_here);
-            m.position(currentLatlng).anchor(0.5f, 0.9f).icon(BitmapDescriptorFactory.fromBitmap(currentIcon)).title(getString(R.string.here));
+
+            myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.ic_here);
+            m.position(here).anchor(0.5f, 0.9f).icon(BitmapDescriptorFactory.fromBitmap(myIcon)).title(getString(R.string.here));
             // 設定目前位置的標記
             if (currentMarker == null) {//剛開啟的第一次add mark
                 currentMarker = mMap.addMarker(m);
                 Log.e("is null", "is null");
             } else { //此後都跑這裡
-                currentMarker.setPosition(currentLatlng);//每一次位置改變都會跑進來這裡取得新的Latlng座標位置,這裡直接將此Marker的位置指定給新的地理位置
+                currentMarker.setPosition(here);//每一次位置改變都會跑進來這裡取得新的Latlng座標位置,這裡直接將此Marker的位置指定給新的地理位置
                 Log.e("not null", "not null");
             }
         } else {
@@ -280,8 +242,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-//             ================           ==================              ================
-
+    //-----------------------------
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         // 已經連線到Google Services
@@ -296,13 +257,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setMyLocationEnabled(true);//取得地圖上位置藍點及右上角準心按鈕
         mMap.getUiSettings().setMyLocationButtonEnabled(false);//隱藏準心按鈕
         mMap.getUiSettings().setMapToolbarEnabled(false);//關閉點選Marker後右下角出現的工具列
-        polylineOpt = new PolylineOptions();
-        //線條顏色
-        polylineOpt.color(Color.BLUE);
-        //線條寬度
-        polylineOpt.width(8f);
 
-        mMap.setOnMarkerClickListener(this);    //地標點擊監聽
         mMap.setInfoWindowAdapter(new MyInfoAdapter(this));//資訊視窗樣式
         mMap.setOnInfoWindowClickListener(this);// 資訊視窗點擊監聽
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
@@ -311,17 +266,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 progressDialog.setMessage(getString(R.string.text_connect));
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-                connect.sendAddressRequest(ADDRESS_API, latLng.latitude, latLng.longitude);
+
+                latLngTarget = latLng;
+                connect.sendAddressRequest(API_GOOGLE_GEOCODE, latLngTarget.latitude, latLngTarget.longitude);
+
             }
         });
     }
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 
+    //-----------------------------
     //EventBus
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSuccessConnect(Map<String, Object> data) {
         if ((int) data.get("type") == TYPE_ADDRESS) {
             Toast.makeText(MapsActivity.this, (String) data.get("data"), Toast.LENGTH_SHORT).show();
+            addTargetMarkerOnMap(latLngTarget, (String) data.get("data"));
 
         } else if ((int) data.get("type") == TYPE_LOCATION) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((LatLng) data.get("data"), 16.0f));
@@ -333,15 +292,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-//             ================           ==================              ================
-
+    //-----------------------------
     @Override
     public void onConnectionSuspended(int i) {
         // Google Services連線中斷
         // int參數是連線中斷的代號
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         // Google Services連線失敗
@@ -353,8 +311,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.LENGTH_LONG).show();
         }
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     @Override
     public void onLocationChanged(Location location) {
         // 位置改變
@@ -362,8 +320,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         currentLocation = location;
         getLocation(currentLocation);
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     private synchronized void configGoogleApiClient() {
         // 建立Google API用戶端物件
         googleApiClient = new GoogleApiClient.Builder(this)
@@ -372,8 +330,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .addApi(LocationServices.API)
                 .build();
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     private void startConnectGoogleMapAPI() {
         init();
         configGoogleApiClient();
@@ -384,7 +342,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        loadKML();
     }
 
-//             ================           ==================              ================
+    //-----------------------------
 
     /**
      * 更多Kml相關用法在以下網址
@@ -404,7 +362,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    //             ================           ==================              ================
+    //-----------------------------
     // 建立Location請求物件
     private void configLocationRequest() {
         locationRequest = new LocationRequest();
@@ -416,6 +374,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
+
+    //-----------------------------
     //   todo android 6.0後要權限          ================           ==================              ================
     //但若是版本在6.0以前的會只要有在Manifest加入權限即可直接執行,不影響程式進行
     private void checkPermissionsForResult() {
@@ -446,6 +406,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    //-----------------------------
     private boolean checkPermissionAfterResult(int[] grantResults) {//對每一個權限比對
         boolean isAccept = false;
         for (int i = 0; i < grantResults.length; i++) {
@@ -459,6 +420,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         return isAccept;//如果都是true才會走到這裡並且回傳
     }
 
+    //-----------------------------
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -478,12 +440,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     private void goToSettingPermissions() {
         AlertDialog.Builder alert = new AlertDialog.Builder(MapsActivity.this);
-        alert.setMessage("前往設定權限？");
-        alert.setPositiveButton("前往", new DialogInterface.OnClickListener() {
+        alert.setMessage(getString(R.string.permission_gotocheck));
+        alert.setPositiveButton(getString(R.string.permission_goahead), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent settings = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + MapsActivity.this.getPackageName()));
@@ -495,7 +457,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         alert.show();
     }
 
-    //  ========================================  ========================================  ========================================
+    //-----------------------------
     private void closeKeyboard() { //關閉虛擬鍵盤
         View view = this.getCurrentFocus();
         if (view != null) {
@@ -504,8 +466,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-//            ================           ==================              ================
-
+    //-----------------------------
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -519,21 +480,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-//             ================           ==================              ================
-
+    //-----------------------------
     @Override
     protected void onResume() {
         super.onResume();
-//        setUpMapIfNeeded();
+
 //         連線到Google API用戶端
-        if (googleApiClient != null) {
-            if (!googleApiClient.isConnected() && currentMarker != null) {
-                startConnectGoogleMapAPI();
-            }
+        if (googleApiClient != null && !googleApiClient.isConnected() && currentMarker != null) {
+            startConnectGoogleMapAPI();
         }
     }
-//             ================           ==================              ================
 
+    //-----------------------------
     @Override
     protected void onPause() {
         super.onPause();
@@ -546,8 +504,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    //             ================           ==================              ================
-
+    //-----------------------------
     @Override
     protected void onStop() {
         super.onStop();
