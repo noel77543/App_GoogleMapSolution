@@ -3,14 +3,12 @@ package tw.com.creatidea.t_57_googlemap_solution;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -40,13 +38,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import com.google.maps.android.kml.KmlLayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
@@ -72,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //TODO 6.0 版本後 需要權限
     final int LOCATION_PERMISSION_REQUEST = 33;
+
 
     // TODO 裝置位置用
     // Google API用戶端物件
@@ -103,7 +100,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private String searchAddress;
 
     private GoogleConnect connect;
-
+    //用來控制infowindow 開啟或關閉
+    private boolean isInfoWindowShown = false;
 
     //  UI
     // butterknife
@@ -189,9 +187,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void addTargetMarkerOnMap(LatLng myPostion, String myTitle) {
         Bitmap myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.myicon);
 
-        if (markerTarget != null) {
-            markerTarget.remove();
-        }
         markerTarget = mMap.addMarker(optionsTarget
                 .position((myPostion))
                 .title(myTitle)
@@ -263,13 +258,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                progressDialog.setMessage(getString(R.string.text_connect));
-                progressDialog.setCancelable(false);
-                progressDialog.show();
+                if (markerTarget != null && isInfoWindowShown) {
+                    markerTarget.hideInfoWindow();
+                    markerTarget.remove();
 
-                latLngTarget = latLng;
-                connect.sendAddressRequest(API_GOOGLE_GEOCODE, latLngTarget.latitude, latLngTarget.longitude);
+                    isInfoWindowShown = false;
+                    return;
+                } else if (!isInfoWindowShown) {
+                    progressDialog.setMessage(getString(R.string.text_connect));
+                    progressDialog.setCancelable(false);
+                    progressDialog.show();
+                    latLngTarget = latLng;
+                    connect.sendAddressRequest(API_GOOGLE_GEOCODE, latLngTarget.latitude, latLngTarget.longitude);
 
+                    isInfoWindowShown = true;
+                }
             }
         });
     }
@@ -380,10 +383,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //但若是版本在6.0以前的會只要有在Manifest加入權限即可直接執行,不影響程式進行
     private void checkPermissionsForResult() {
         Log.e("startcheck", "startcheck");
-        final int PERMISSION_ACCESS_FINE_LOCATION = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION);
-        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        final int PERMISSION_ACCESS_FINE_LOCATION = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         //欲申請的權限
-        String[] locationPermissions = new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION};
+        String[] locationPermissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 //        已擁有權限－PERMISSION_GRANTED
 //        代表應用程式目前已獲得使用者允許使用該權限。
 //
@@ -515,4 +518,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
+
 }
