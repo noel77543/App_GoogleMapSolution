@@ -20,6 +20,6 @@ public class ConnectInfo {
      *                }
      * key 你的googleAPI key
      */
-    String API_GOOGLE_DIRECTION =
-            "https://maps.googleapis.com/maps/api/directions/json?origin={0}&destination={1}&mode={2}&language=zh-TW&sensor=true&key={3}";
+    public static final String API_GOOGLE_DIRECTION =
+            "https://maps.googleapis.com/maps/api/directions/json?origin={0}&destination={1}&mode={2}&language=zh-TW&sensor=false&key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg";
 }

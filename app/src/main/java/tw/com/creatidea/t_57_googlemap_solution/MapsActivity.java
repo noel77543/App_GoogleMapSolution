@@ -38,6 +38,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.kml.KmlLayer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,6 +48,8 @@ import org.greenrobot.eventbus.ThreadMode;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -54,8 +58,10 @@ import butterknife.OnClick;
 import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_GOOGLE_DIRECTION;
 import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_GOOGLE_GEOCODE;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 
 /**
@@ -67,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     //TODO 6.0 版本後 需要權限
-    final int LOCATION_PERMISSION_REQUEST = 33;
+    final int LOCATION_PERMISSION_REQUEST = 9487;
 
 
     // TODO 裝置位置用
@@ -103,7 +109,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //用來控制infowindow 開啟或關閉
     private boolean isInfoWindowShown = false;
 
-    //  UI
+    //路線規劃
+    private Polyline polyline;
+
     // butterknife
     @BindView(R.id.edit)
     EditText edit;
@@ -119,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //TODO 如若無法使用此範例原因有以下幾點可能
 
     /**
-     * 請更改values 資料夾底下的google_,aps_api.xml中的金鑰
+     * 請更改values 資料夾底下的google_maps_api.xml中的金鑰
      * 請開啟手機的定位功能
      * 請給予App地理位置資訊之權限
      */
@@ -131,7 +139,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -148,6 +155,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void init() {
 
         progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.text_connect));
+        progressDialog.setCancelable(false);
+
         connect = new GoogleConnect(this);
     }
 
@@ -161,8 +171,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 searchAddress = edit.getText().toString();
 
                 if (searchAddress.length() > 0) {
-                    progressDialog.setMessage(getString(R.string.text_connect));
-                    progressDialog.setCancelable(false);
                     progressDialog.show();
                     connect.sendLocationRequest(searchAddress);
                 } else {
@@ -199,10 +207,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     //-----------------------------
     @Override
-    public void onInfoWindowClick(Marker marker) {
-        Toast.makeText(this, marker.getTitle() + "\n經度:" + marker.getPosition().longitude +
-                        "\n緯度:" + marker.getPosition().latitude,
-                Toast.LENGTH_SHORT).show();
+    public void onInfoWindowClick(final Marker marker) {
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(MessageFormat.format(getString(R.string.toast_route), marker.getTitle()));
+        dialog.setPositiveButton(getString(R.string.permission_goahead), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String originLatlng = currentLocation.getLatitude() + "," + currentLocation.getLongitude();
+                String destinationLatlng = marker.getPosition().latitude + "," + marker.getPosition().longitude;
+                String mode = "walking";
+
+                String url = MessageFormat.format(API_GOOGLE_DIRECTION, originLatlng, destinationLatlng, mode);
+                connect.sendDirectionRequest(url);
+                progressDialog.show();
+
+            }
+        });
+        dialog.show();
     }
 
     //-----------------------------
@@ -227,10 +249,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // 設定目前位置的標記
             if (currentMarker == null) {//剛開啟的第一次add mark
                 currentMarker = mMap.addMarker(m);
-                Log.e("is null", "is null");
             } else { //此後都跑這裡
                 currentMarker.setPosition(here);//每一次位置改變都會跑進來這裡取得新的Latlng座標位置,這裡直接將此Marker的位置指定給新的地理位置
-                Log.e("not null", "not null");
             }
         } else {
             Toast.makeText(this, "無法定位", Toast.LENGTH_LONG).show();
@@ -261,12 +281,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (markerTarget != null && isInfoWindowShown) {
                     markerTarget.hideInfoWindow();
                     markerTarget.remove();
+                    //每次繪製前這裡清除前一次繪製的路線
+                    if (polyline != null) {
+                        polyline.remove();
+                    }
 
                     isInfoWindowShown = false;
                     return;
                 } else if (!isInfoWindowShown) {
-                    progressDialog.setMessage(getString(R.string.text_connect));
-                    progressDialog.setCancelable(false);
+
                     progressDialog.show();
                     latLngTarget = latLng;
                     connect.sendAddressRequest(API_GOOGLE_GEOCODE, latLngTarget.latitude, latLngTarget.longitude);
@@ -288,6 +311,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else if ((int) data.get("type") == TYPE_LOCATION) {
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((LatLng) data.get("data"), 16.0f));
 
+        } else if ((int) data.get("type") == TYPE_DIRECTION) {
+            List<LatLng> dataList = (List<LatLng>) data.get("data");
+
+            PolylineOptions polyLines = new PolylineOptions();
+            polyLines.add(new LatLng(myLatitude, myLongitude));
+            for (int i = 0; i < dataList.size(); i++) {
+                polyLines.add(dataList.get(i));
+            }
+            polyLines.add(latLngTarget);
+            polyline = mMap.addPolyline(polyLines);
+
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngTarget, 20.0f));
         }
 
         if (progressDialog.isShowing()) {

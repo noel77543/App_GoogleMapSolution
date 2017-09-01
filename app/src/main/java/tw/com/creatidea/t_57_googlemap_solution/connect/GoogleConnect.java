@@ -3,6 +3,7 @@ package tw.com.creatidea.t_57_googlemap_solution.connect;
 import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -13,6 +14,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -22,6 +24,7 @@ import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
 import tw.com.creatidea.t_57_googlemap_solution.util.HttpHandler;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 
 /**
@@ -99,11 +102,67 @@ public class GoogleConnect {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
 
             addressLatlng = new LatLng(latitude, longitude);
-            EventCenter.getInstance().sendLocation(TYPE_LOCATION,addressLatlng);
+            EventCenter.getInstance().sendLocation(TYPE_LOCATION, addressLatlng);
         }
     }
+
+    //---------------------
+
+    /**
+     * https://maps.googleapis.com/maps/api/directions/json?origin=25.051875,121.549663&destination=25.045848,121.543998&mode=walking&language=zh-TW&sensor=true&key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg
+     * 取得最佳路線
+     */
+    public void sendDirectionRequest(final String ADDRESS_URL) {
+
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                List<LatLng> dataList = new ArrayList<>();
+                String jsonStr = hh.makeServiceCall(ADDRESS_URL);
+                if (jsonStr != null) {
+                    try {
+                        JSONObject jObj1 = new JSONObject(jsonStr);
+                        String status = jObj1.getString("status");
+
+                        if (status.equals("OK")) {
+                            JSONArray routes = jObj1.getJSONArray("routes");
+                            JSONObject jobj2 = routes.getJSONObject(0);
+                            JSONArray legs = jobj2.getJSONArray("legs");
+                            JSONObject jobj3 = legs.getJSONObject(0);
+
+                            //所有途經點位
+                            JSONArray steps = jobj3.getJSONArray("steps");
+
+                            //取得
+
+                            for (int i = 0; i < steps.length(); i++) {
+                                JSONObject jobj4 = steps.getJSONObject(i);
+                                JSONObject jobj5 = jobj4.getJSONObject("end_location");
+                                double lat = Double.parseDouble(jobj5.getString("lat"));
+                                double lng = Double.parseDouble(jobj5.getString("lng"));
+
+                                Log.e("lat",""+lat);
+                                Log.e("lng",""+lng);
+                                dataList.add(new LatLng(lat, lng));
+                            }
+
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } finally {
+                        EventCenter.getInstance().sendRoute(TYPE_DIRECTION, dataList);
+
+                    }
+                }
+            }
+        });
+        t.start();
+    }
+
 
 }

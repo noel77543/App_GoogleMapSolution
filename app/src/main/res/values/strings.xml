@@ -9,6 +9,8 @@
     <string name="toast_enteraddress">請輸入正確地址後再次嘗試</string>
     <string name="toast_neepermission">此行為需要位置權限</string>
     <string name="toast_noninfomation">點選的位置不具備地址資訊</string>
+    <string name="toast_route">取得前往：「{0}」的最佳路徑？</string>
+
     <!--progressdialog-->
     <string name="text_loading">搜索中...</string>
     <string name="hint_edit">" "請輸入想搜尋的地址</string>
@@ -17,8 +19,7 @@
     <!--api地址轉經緯度錯誤-->
     <string name="api_wrong">INVALID_REQUEST</string>
 
-
-    <!--權限alertdialog-->
+    <!--dialog-->
     <string name="permission_gotocheck">前往設定權限？</string>
     <string name="permission_goahead">前往</string>
 

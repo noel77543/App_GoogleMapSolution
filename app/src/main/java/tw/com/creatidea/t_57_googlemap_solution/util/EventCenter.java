@@ -13,9 +13,10 @@ import java.util.Map;
  */
 
 public class EventCenter {
-    public static  final int TYPE_ADDRESS = 111;
-    public static  final int TYPE_LOCATION = 222;
 
+    public static final int TYPE_ADDRESS = 111;
+    public static final int TYPE_LOCATION = 222;
+    public static final int TYPE_DIRECTION = 333;
 
 
     //--------------------------------------------------
@@ -65,6 +66,17 @@ public class EventCenter {
      * */
     public void sendLocation(int type,LatLng address){
         sendObjectEvent(type,address);
+
+    }
+
+    //--------------------------------------------------
+
+    /**
+     * 最佳路線規劃
+     *
+     * */
+    public void sendRoute(int type,List<LatLng> latLngList){
+        sendObjectEvent(type,latLngList);
 
     }
 
