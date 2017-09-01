@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import tw.com.creatidea.t_57_googlemap_solution.Directions;
+
 /**
  * Created by noel on 2017/8/16.
  */
@@ -75,8 +77,8 @@ public class EventCenter {
      * 最佳路線規劃
      *
      * */
-    public void sendRoute(int type,List<LatLng> latLngList){
-        sendObjectEvent(type,latLngList);
+    public void sendRoute(int type, Directions directions){
+        sendObjectEvent(type, directions);
 
     }
 

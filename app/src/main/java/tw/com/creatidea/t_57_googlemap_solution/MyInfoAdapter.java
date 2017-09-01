@@ -1,6 +1,7 @@
 package tw.com.creatidea.t_57_googlemap_solution;
 
 import android.app.Activity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -40,6 +41,12 @@ public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter{
         mLatitude.setText("經度："+marker.getPosition().latitude);
         mLongitude.setText("緯度："+marker.getPosition().longitude);
         img.setImageResource(R.mipmap.ic_launcher_round);
+        img.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("123","123");
+            }
+        });
         return v;
     }
 }

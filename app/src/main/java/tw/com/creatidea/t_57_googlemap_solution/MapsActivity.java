@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,7 +40,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
+import com.google.maps.android.geojson.GeoJsonPoint;
 import com.google.maps.android.kml.KmlLayer;
 
 import org.greenrobot.eventbus.EventBus;
@@ -49,6 +53,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -169,7 +174,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.btnSearch:
 
                 searchAddress = edit.getText().toString();
-
                 if (searchAddress.length() > 0) {
                     progressDialog.show();
                     connect.sendLocationRequest(searchAddress);
@@ -177,15 +181,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     Toast.makeText(this, getString(R.string.toast_enteraddress), Toast.LENGTH_SHORT).show();
                 }
                 closeKeyboard();//關閉Keyboard
-
                 break;
+
             case R.id.btnFocus:
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(here, 16.0f));
-
                 break;
+
             case R.id.btnReload:
                 checkPermissionsForResult();
-
                 break;
         }
     }
@@ -194,6 +197,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //-----------------------------
     private void addTargetMarkerOnMap(LatLng myPostion, String myTitle) {
         Bitmap myIcon = BitmapFactory.decodeResource(this.getResources(), R.drawable.myicon);
+
+        if (markerTarget != null) {
+            markerTarget.remove();
+        }
 
         markerTarget = mMap.addMarker(optionsTarget
                 .position((myPostion))
@@ -287,7 +294,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     }
 
                     isInfoWindowShown = false;
-                    return;
                 } else if (!isInfoWindowShown) {
 
                     progressDialog.show();
@@ -304,26 +310,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //EventBus
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onSuccessConnect(Map<String, Object> data) {
+        //點擊地圖 經緯度轉地址
         if ((int) data.get("type") == TYPE_ADDRESS) {
-            Toast.makeText(MapsActivity.this, (String) data.get("data"), Toast.LENGTH_SHORT).show();
             addTargetMarkerOnMap(latLngTarget, (String) data.get("data"));
 
+            //輸入查詢 地址轉經緯度
         } else if ((int) data.get("type") == TYPE_LOCATION) {
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((LatLng) data.get("data"), 16.0f));
+            latLngTarget = (LatLng) data.get("data");
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLngTarget, 16.0f));
+            addTargetMarkerOnMap((LatLng) data.get("data"), edit.getText().toString());
 
+            //途經點查詢 路線規劃
         } else if ((int) data.get("type") == TYPE_DIRECTION) {
-            List<LatLng> dataList = (List<LatLng>) data.get("data");
+            Directions directions = (Directions) data.get("data");
 
             PolylineOptions polyLines = new PolylineOptions();
-            polyLines.add(new LatLng(myLatitude, myLongitude));
-            for (int i = 0; i < dataList.size(); i++) {
-                polyLines.add(dataList.get(i));
-            }
-            polyLines.add(latLngTarget);
-            polyline = mMap.addPolyline(polyLines);
+            polyLines.width(10);
+            polyLines.color(Color.RED);
 
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLngTarget, 20.0f));
+            final String LINE = directions.getRoutes().get(0).getOverview_polyline().getPoints();
+            List<LatLng> decodedPath = PolyUtil.decode(LINE);
+            polyline = mMap.addPolyline(polyLines.addAll(decodedPath));
         }
+
 
         if (progressDialog.isShowing()) {
             progressDialog.dismiss();
@@ -503,6 +512,45 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+    //-----------------------------
+
+    /**
+     * 用以解析規劃路徑ＡＰＩ所取得的 overview_polyline 已獲得最佳路徑之所有LatLng
+     * 1,import GeoPoint需 Tools -> Android -> SDK Manager-> Appearance & Behavior -> System Settings -> Android SDK 勾選"Google APIs" 及 其右下角"Show Package Detail"
+     * 2,對app package右鍵 -> Open Module Settings -> Compile Sdk Version 選擇 Google APIs
+     */
+    private List<GeoJsonPoint> parseGeoPoint(String encoded) {
+        List<GeoJsonPoint> poly = new ArrayList<GeoJsonPoint>();
+        int index = 0, len = encoded.length();
+        int lat = 0, lng = 0;
+
+        while (index < len) {
+            int b, shift = 0, result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lat += dlat;
+
+            shift = 0;
+            result = 0;
+            do {
+                b = encoded.charAt(index++) - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            } while (b >= 0x20);
+            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+            lng += dlng;
+
+            GeoJsonPoint p = new GeoJsonPoint(new LatLng((((double) lat / 1E5) * 1E6), (((double) lng / 1E5) * 1E6)));
+            poly.add(p);
+        }
+
+        return poly;
+    }
+
 
     //-----------------------------
     @Override
