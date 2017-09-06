@@ -105,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng latLngTarget;
     private Marker markerTarget;
     private MarkerOptions optionsTarget = new MarkerOptions();
-
+    private PolylineOptions polyLines;
 
     private ProgressDialog progressDialog;
     private String searchAddress;
@@ -324,7 +324,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } else if ((int) data.get("type") == TYPE_DIRECTION) {
             Directions directions = (Directions) data.get("data");
 
-            PolylineOptions polyLines = new PolylineOptions();
+            polyLines = new PolylineOptions();
             polyLines.width(10);
             polyLines.color(Color.RED);
 
@@ -514,45 +514,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
     //-----------------------------
 
-    /**
-     * 用以解析規劃路徑ＡＰＩ所取得的 overview_polyline 已獲得最佳路徑之所有LatLng
-     * 1,import GeoPoint需 Tools -> Android -> SDK Manager-> Appearance & Behavior -> System Settings -> Android SDK 勾選"Google APIs" 及 其右下角"Show Package Detail"
-     * 2,對app package右鍵 -> Open Module Settings -> Compile Sdk Version 選擇 Google APIs
-     */
-    private List<GeoJsonPoint> parseGeoPoint(String encoded) {
-        List<GeoJsonPoint> poly = new ArrayList<GeoJsonPoint>();
-        int index = 0, len = encoded.length();
-        int lat = 0, lng = 0;
-
-        while (index < len) {
-            int b, shift = 0, result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lat += dlat;
-
-            shift = 0;
-            result = 0;
-            do {
-                b = encoded.charAt(index++) - 63;
-                result |= (b & 0x1f) << shift;
-                shift += 5;
-            } while (b >= 0x20);
-            int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-            lng += dlng;
-
-            GeoJsonPoint p = new GeoJsonPoint(new LatLng((((double) lat / 1E5) * 1E6), (((double) lng / 1E5) * 1E6)));
-            poly.add(p);
-        }
-
-        return poly;
-    }
-
-
-    //-----------------------------
     @Override
     protected void onDestroy() {
         super.onDestroy();
