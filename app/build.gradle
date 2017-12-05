@@ -43,6 +43,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.google.android.gms:play-services-location:10.2.0'
 
+    //design
+    compile 'com.android.support:design:25.0.0'
+    //async-http
+    compile 'com.loopj.android:android-async-http:1.4.9'
     //butterknife
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
@@ -55,7 +59,7 @@ dependencies {
 
 apt {
     arguments {
-        eventBusIndex "tw.com.creatidea.financialinstitute.eventbus.MyEventBusIndex"
+        eventBusIndex "tw.com.creatidea.t_57_googlemap_solution.eventbus.MyEventBusIndex"
     }
 }
 

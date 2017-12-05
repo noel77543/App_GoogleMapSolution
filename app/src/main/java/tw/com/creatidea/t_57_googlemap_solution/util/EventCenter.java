@@ -1,5 +1,6 @@
 package tw.com.creatidea.t_57_googlemap_solution.util;
 
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.greenrobot.eventbus.EventBus;
@@ -8,13 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import tw.com.creatidea.t_57_googlemap_solution.Directions;
+import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
 
 /**
  * Created by noel on 2017/8/16.
  */
 
 public class EventCenter {
+    //連線失敗用
+    public static int EVENT_CONNECT_FAIL = 11;
 
     public static final int TYPE_ADDRESS = 111;
     public static final int TYPE_LOCATION = 222;
@@ -52,11 +56,19 @@ public class EventCenter {
     //--------------------------------------------------
 
     /**
+     * 發送 連線失敗
+     */
+    public void sendConnectErrorEvent(String errString) {
+        sendObjectEvent(EVENT_CONNECT_FAIL, errString);
+    }
+    //-----------------
+
+    /**
      * 經緯度轉地址
-     * @param address 地址
+     * @param addressInfo 地址
      * */
-    public void sendAddress(int type,String address){
-        sendObjectEvent(type,address);
+    public void sendAddress(int type, AddressInfo addressInfo){
+        sendObjectEvent(type, addressInfo);
 
     }
 
@@ -77,8 +89,8 @@ public class EventCenter {
      * 最佳路線規劃
      *
      * */
-    public void sendRoute(int type, Directions directions){
-        sendObjectEvent(type, directions);
+    public void sendRoute(int type, DirectionInfo directionInfo){
+        sendObjectEvent(type, directionInfo);
 
     }
 

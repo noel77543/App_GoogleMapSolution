@@ -6,7 +6,7 @@ package tw.com.creatidea.t_57_googlemap_solution.connect;
 
 public class ConnectInfo {
     //地址
-    public static final String API_GOOGLE_GEOCODE = "http://maps.google.com/maps/api/geocode/json?latlng={0},{1}&language=zh-TW&sensor=true";
+    public static final String API_GOOGLE_GEOCODE = "http://maps.google.com/maps/api/geocode/json";
 
     //路線
     /**
@@ -21,5 +21,5 @@ public class ConnectInfo {
      * key 你的googleAPI key
      */
     public static final String API_GOOGLE_DIRECTION =
-            "https://maps.googleapis.com/maps/api/directions/json?origin={0}&destination={1}&mode={2}&language=zh-TW&sensor=false&key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg";
+            "https://maps.googleapis.com/maps/api/directions/json";
 }
