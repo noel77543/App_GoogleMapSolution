@@ -1,39 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<!--名-->
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <ImageView
-        android:layout_gravity="center"
         android:id="@+id/imageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@mipmap/ic_launcher_round" />
+        android:layout_gravity="center"
+        android:src="@mipmap/ic_launcher_round" />
 
     <TextView
-        android:layout_gravity="center"
         android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
+        android:layout_gravity="center"
         android:textColor="@color/colorAccent"
+        android:textSize="16sp"
         tools:text="TextView" />
-<!--經-->
+
     <TextView
-        android:layout_gravity="left"
         android:id="@+id/tvLongitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
         tools:text="TextView" />
-<!--緯-->
+
     <TextView
-        android:layout_gravity="left"
         android:id="@+id/tvLatitude"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="start"
         tools:text="TextView" />
 
 </LinearLayout>

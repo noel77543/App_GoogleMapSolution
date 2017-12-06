@@ -1,6 +1,7 @@
 package tw.com.creatidea.t_57_googlemap_solution.basic;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -13,6 +14,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -45,7 +47,6 @@ import tw.com.creatidea.t_57_googlemap_solution.R;
 
 public abstract class BasicMapActivity extends BasicLocationActivity implements OnMapReadyCallback {
     private Marker searchMarker;
-    private View view;
     //判斷是否初次進來 需聚焦在目前位置
     public GoogleMap googleMap;
     public LatLng currentLatlng;
@@ -159,43 +160,6 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
         init();
     }
 
-
-    //------------- todo public 方法
-
-    /**
-     * 地址轉經緯度
-     */
-    public void goToLocationFromCastAddress(final String address) {
-        if (searchMarker != null) {
-            searchMarker.remove();
-        }
-        LatLng searchLocation;
-        double latitude = 0;
-        double longitude = 0;
-        List<Address> addressRequest = new ArrayList<>();
-
-        Geocoder geocoder = new Geocoder(this, Locale.TAIWAN);
-        try {
-            addressRequest = geocoder.getFromLocationName(address, 1);
-            if (addressRequest.size() != 0) {
-                latitude = addressRequest.get(0).getLatitude();
-                longitude = addressRequest.get(0).getLongitude();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (addressRequest.size() > 0) {
-            searchLocation = new LatLng(latitude, longitude);
-            searchMarker = googleMap.addMarker(new MarkerOptions()
-                    .position(searchLocation)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.gothere))
-                    .title(address)
-            );
-            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(searchLocation, 8.0f));
-        } else {
-            Toast.makeText(this, getString(R.string.toast_server_error_googlemap_search_address), Toast.LENGTH_SHORT).show();
-        }
-    }
     //------------------
 
     /**
@@ -209,7 +173,18 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
         }
         return true;
     }
+    //-----------------------------
 
+    /**
+     * 關閉虛擬鍵盤
+     */
+    public void closeKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 
     //------------- todo 抽象方法
 

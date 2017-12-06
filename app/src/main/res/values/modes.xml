@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="direction_modes">
-        <item>@string/direction_driving</item>
-        <item>@string/direction_walking</item>
-    </string-array>
-</resources>

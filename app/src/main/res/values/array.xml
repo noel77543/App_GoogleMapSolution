@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="navigation_array_ch">
+        <item>@string/place_item_airport_ch</item>
+        <item>@string/place_item_restaurant_ch</item>
+        <item>@string/place_item_cafe_ch</item>
+        <item>@string/place_item_bank_ch</item>
+        <item>@string/place_item_atm_ch</item>
+        <item>@string/place_item_hospital_ch</item>
+        <item>@string/place_item_library_ch</item>
+        <item>@string/place_item_park_ch</item>
+        <item>@string/place_item_parking_ch</item>
+        <item>@string/place_item_post_office_ch</item>
+        <item>@string/place_item_police_ch</item>
+    </string-array>
+
+    <string-array name="navigation_array_en">
+        <item>@string/place_item_airport_en</item>
+        <item>@string/place_item_restaurant_en</item>
+        <item>@string/place_item_cafe_en</item>
+        <item>@string/place_item_bank_en</item>
+        <item>@string/place_item_atm_en</item>
+        <item>@string/place_item_hospital_en</item>
+        <item>@string/place_item_library_en</item>
+        <item>@string/place_item_park_en</item>
+        <item>@string/place_item_parking_en</item>
+        <item>@string/place_item_post_office_en</item>
+        <item>@string/place_item_police_en</item>
+    </string-array>
+
+</resources>

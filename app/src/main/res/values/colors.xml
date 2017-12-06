@@ -5,6 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <!--loadingdialog文字顏色-->
-    <color name="loading_dialog_text_color">#CFE0E0E0</color>
+    <color name="loading_dialog_text_color">#cf7e7e7e</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
 
 </resources>

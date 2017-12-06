@@ -11,6 +11,7 @@ import java.util.Map;
 
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 
 /**
  * Created by noel on 2017/8/16.
@@ -18,11 +19,12 @@ import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
 
 public class EventCenter {
     //連線失敗用
-    public static int EVENT_CONNECT_FAIL = 11;
+    public static int EVENT_CONNECT_FAIL = 111;
 
-    public static final int TYPE_ADDRESS = 111;
-    public static final int TYPE_LOCATION = 222;
-    public static final int TYPE_DIRECTION = 333;
+    public static final int TYPE_ADDRESS = 222;
+    public static final int TYPE_LOCATION = 333;
+    public static final int TYPE_DIRECTION = 444;
+    public static final int TYPE_PLACE = 555;
 
 
     //--------------------------------------------------
@@ -91,7 +93,13 @@ public class EventCenter {
      * */
     public void sendRoute(int type, DirectionInfo directionInfo){
         sendObjectEvent(type, directionInfo);
-
     }
+    //--------------------------------------------------
 
+    /**
+     * 地方資訊
+     * */
+    public void sendPlace(int type, PlaceInfo placeInfo){
+        sendObjectEvent(type, placeInfo);
+    }
 }

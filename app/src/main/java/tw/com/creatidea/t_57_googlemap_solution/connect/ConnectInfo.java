@@ -5,9 +5,10 @@ package tw.com.creatidea.t_57_googlemap_solution.connect;
  */
 
 public class ConnectInfo {
-    //地址
-    public static final String API_GOOGLE_GEOCODE = "http://maps.google.com/maps/api/geocode/json";
 
+    //經緯度轉地址
+    public static final String API_GOOGLE_GEOCODE = "http://maps.google.com/maps/api/geocode/json";
+    //-------
     //路線
     /**
      * 參考：http://blog.csdn.net/mad1989/article/details/9734667
@@ -20,6 +21,12 @@ public class ConnectInfo {
      *                }
      * key 你的googleAPI key
      */
-    public static final String API_GOOGLE_DIRECTION =
-            "https://maps.googleapis.com/maps/api/directions/json";
+    public static final String API_GOOGLE_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json";
+    //-------
+    /**
+     * 種類：https://developers.google.com/places/supported_types#table1
+     * 參數：location=座標&radius=搜尋範圍&types=種類&sensor=true&key=server api key
+     * */
+    public static final String API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+
 }
