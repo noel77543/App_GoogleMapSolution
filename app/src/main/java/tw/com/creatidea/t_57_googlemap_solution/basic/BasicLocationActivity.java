@@ -12,6 +12,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
@@ -29,7 +30,7 @@ import tw.com.creatidea.t_57_googlemap_solution.util.LoadingCycleManager;
  * Created by noel on 2017/12/5.
  */
 
-public abstract class BasicLocationActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks,
+public abstract class BasicLocationActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     final int LOCATION_PERMISSION_REQUEST = 1992;

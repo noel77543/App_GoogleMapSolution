@@ -11,6 +11,7 @@ import java.util.Map;
 
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 
 /**
@@ -25,6 +26,7 @@ public class EventCenter {
     public static final int TYPE_LOCATION = 333;
     public static final int TYPE_DIRECTION = 444;
     public static final int TYPE_PLACE = 555;
+    public static final int TYPE_DISTANCE = 666;
 
 
     //--------------------------------------------------
@@ -101,5 +103,16 @@ public class EventCenter {
      * */
     public void sendPlace(int type, PlaceInfo placeInfo){
         sendObjectEvent(type, placeInfo);
+    }
+
+    //---------
+
+    /***
+     * 距離 , 耗時
+     * @param type
+     * @param distanceInfo
+     */
+    public void sendDistance(int type, DistanceInfo distanceInfo){
+        sendObjectEvent(type, distanceInfo);
     }
 }

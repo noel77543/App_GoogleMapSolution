@@ -26,7 +26,13 @@ public class ConnectInfo {
     /**
      * 種類：https://developers.google.com/places/supported_types#table1
      * 參數：location=座標&radius=搜尋範圍&types=種類&sensor=true&key=server api key
+     * 地方資訊
      * */
     public static final String API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
+    /***
+     * origins=25.0519432,121.5496224&destinations=25.0511223,121.5505239&key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg
+     * 距離,耗時
+     */
+    public static final String API_GOOGLE_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json";
 }

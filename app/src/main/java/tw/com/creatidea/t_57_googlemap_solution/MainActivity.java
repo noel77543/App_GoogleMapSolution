@@ -3,17 +3,20 @@ package tw.com.creatidea.t_57_googlemap_solution;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -40,6 +43,7 @@ import tw.com.creatidea.t_57_googlemap_solution.basic.BasicMapActivity;
 import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.NavigationDrawer;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.model.NavigationData;
@@ -47,6 +51,7 @@ import tw.com.creatidea.t_57_googlemap_solution.util.DialogTargetChoose;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
 
@@ -55,7 +60,6 @@ import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLA
  */
 
 public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, DialogTargetChoose.OnAcceptClickListener {
-
 
     //點選的目標點位
     private LatLng latLngTarget;
@@ -76,6 +80,8 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     private Marker destinationMarker;
 
     // butterknife
+    @BindView(R.id.coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.edit)
     MultiAutoCompleteTextView edit;
     @BindView(R.id.btn_focus)
@@ -151,6 +157,10 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         } else if ((int) data.get("type") == TYPE_DIRECTION) {
             DirectionInfo directionInfo = (DirectionInfo) data.get("data");
             addPolyLineOnMap(directionInfo);
+            double targetLat = markerTarget == null ? destinationMarker.getPosition().latitude : markerTarget.getPosition().latitude;
+            double targetLng = markerTarget == null ? destinationMarker.getPosition().longitude : markerTarget.getPosition().longitude;
+
+            connect.connectToGetDistance(getUserLocation().getLatitude(), getUserLocation().getLongitude(), targetLat, targetLng);
 
             //地方資訊
         } else if ((int) data.get("type") == TYPE_PLACE) {
@@ -161,6 +171,13 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             new PlaceMarkerHandler(this, googleMap, placeInfo, placeMarkers).execute();
 
             //error message
+        } else if ((int) data.get("type") == TYPE_DISTANCE) {
+            DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
+            String distance = ((double) distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10) + "公尺";
+            String time = ((double) distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) + "分";
+
+            Snackbar.make(coordinatorLayout, String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_LONG).show();
+
         } else {
             String errString = (String) data.get("data");
             Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
@@ -256,6 +273,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
      */
     @Override
     public void OnAcceptClick(int index) {
+        isInfoWindowShown = true;
         Marker marker = placeMarkers.get(index);
         marker.showInfoWindow();
         goToTargetLocationByAnimate(marker.getPosition(), 20.0f);

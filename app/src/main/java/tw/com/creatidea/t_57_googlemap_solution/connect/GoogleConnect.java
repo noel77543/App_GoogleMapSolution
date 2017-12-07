@@ -19,11 +19,13 @@ import cz.msebera.android.httpclient.Header;
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
 import tw.com.creatidea.t_57_googlemap_solution.R;
+import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
+import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
 
@@ -35,6 +37,7 @@ public class GoogleConnect extends BasicJsonConnect {
     private DirectionInfo directionInfo;
     private AddressInfo addressInfo;
     private PlaceInfo placeInfo;
+    private DistanceInfo distanceInfo;
     private Context context;
 
     public GoogleConnect(Context context) {
@@ -184,9 +187,9 @@ public class GoogleConnect extends BasicJsonConnect {
                     super.onSuccess(statusCode, headers, response);
                     loadingCycleManager.dismiss();
                     placeInfo = new Gson().fromJson(response.toString(), PlaceInfo.class);
-                    if(placeInfo.getStatus().equals("OK")){
+                    if (placeInfo.getStatus().equals("OK")) {
                         EventCenter.getInstance().sendPlace(TYPE_PLACE, placeInfo);
-                    }else {
+                    } else {
                         EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_googlemap_non_place));
                     }
 
@@ -209,6 +212,54 @@ public class GoogleConnect extends BasicJsonConnect {
             loadingCycleManager.dismiss();
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
+    }
 
+    //-----------------
+
+    /**
+     * 距離, 需時
+     */
+    public void connectToGetDistance(double startLat, double startLng, double endLat, double endLng) {
+        RequestParams params = new RequestParams();
+        params.put("origins", startLat + "," + startLng);
+        params.put("destinations", endLat + "," + endLng);
+        params.put("language", "zh-tw");
+        params.put("key", context.getString(R.string.google_maps_key));
+
+        loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
+        if (isNetWorkable()) {
+            loadingCycleManager.show();
+            client.get(ConnectInfo.API_GOOGLE_MATRIX, params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    super.onSuccess(statusCode, headers, response);
+                    loadingCycleManager.dismiss();
+                    distanceInfo = new Gson().fromJson(response.toString(), DistanceInfo.class);
+                    Log.e("a", distanceInfo.getStatus());
+                    if (distanceInfo.getStatus().equals("OK")) {
+                        EventCenter.getInstance().sendDistance(TYPE_DISTANCE, distanceInfo);
+                    } else {
+                        EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_googlemap_non_distance));
+                    }
+
+                }
+
+                @Override
+                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
+                    loadingCycleManager.dismiss();
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    super.onFailure(statusCode, headers, throwable, errorResponse);
+                    loadingCycleManager.dismiss();
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
+                }
+            });
+        } else {
+            loadingCycleManager.dismiss();
+            EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
+        }
     }
 }

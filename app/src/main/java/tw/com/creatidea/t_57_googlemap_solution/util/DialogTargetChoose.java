@@ -64,7 +64,7 @@ public class DialogTargetChoose extends Dialog {
     private void setDialogGravity() {
         Window dialogWindow = getWindow();
         WindowManager.LayoutParams latouyParams = dialogWindow.getAttributes();
-        dialogWindow.setGravity(Gravity.CENTER | Gravity.BOTTOM);
+        dialogWindow.setGravity(Gravity.CENTER);
         dialogWindow.setAttributes(latouyParams);
         dialogWindow.setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT);

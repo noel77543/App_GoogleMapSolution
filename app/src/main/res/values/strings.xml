@@ -64,7 +64,9 @@
     <string name="toast_server_error_googlemap_search_address">您輸入的地址資訊格式有誤,請再試一次。</string>
     <string name="toast_server_error_address">伺服器忙線中，無法取得地址資訊,請再試一次。</string>
     <string name="toast_server_error_place">伺服器忙線中，無法取得地方資訊,請再試一次。</string>
+    <string name="toast_server_error_distance">伺服器忙線中，無法取得距離與需時,請再試一次。</string>
+    <string name="toast_googlemap_non_distance">目標地點不存在,無法取得距離與耗時。</string>
     <string name="toast_googlemap_non_place">鄰近地區不存在所選項目。</string>
     <string name="text_googlemap_non_address">目標不具備地址資訊。</string>
-
+    <string name="snackbar_distance_googlemap">距離：%1$s  需時：%2$s</string>
 </resources>
