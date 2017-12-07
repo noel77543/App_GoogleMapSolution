@@ -50,6 +50,7 @@
     <string name="place_item_police_en">police</string>
 
     <!--others-->
+    <string name="dialog_choose">選擇</string>
     <string name="dialog_message_googlemap_getaddress">取得地址資訊...</string>
     <string name="dialog_message_googlemap_location">取得目前位置...</string>
     <string name="dialog_message_googlemap_place">取得地方資訊...</string>

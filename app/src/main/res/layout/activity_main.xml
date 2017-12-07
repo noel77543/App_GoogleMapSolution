@@ -5,7 +5,6 @@
     android:layout_gravity="end">
 
     <FrameLayout
-        android:id="@+id/content_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,53 +13,56 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20sp"
-            android:orientation="horizontal">
-
-            <MultiAutoCompleteTextView
+        <MultiAutoCompleteTextView
                 android:id="@+id/edit"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
+                android:layout_marginTop="20sp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20sp"
                 android:layout_marginRight="20sp"
-                android:layout_weight="1"
-                android:hint="@string/hint_edit"
-                android:paddingTop="30dp"
                 android:completionThreshold="1"
+                android:hint="@string/hint_edit"
                 android:imeOptions="actionDone"
                 android:inputType="textAutoComplete|textAutoCorrect"
+                android:paddingTop="30dp"
                 android:textSize="15sp" />
-        </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="110dp"
+            android:layout_width="60dp"
+            android:layout_height="160dp"
             android:layout_gravity="end|bottom"
             android:background="@android:color/transparent"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingBottom="20dp"
-            android:paddingEnd="20dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingStart="20dp">
+            android:paddingBottom="15dp"
+            android:paddingEnd="15dp"
+            android:paddingTop="15dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingStart="15dp">
 
             <Button
-                android:id="@+id/btnFocus"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:id="@+id/btn_search"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:background="@drawable/magnifier"
+                android:visibility="invisible" />
+
+            <Button
+                android:id="@+id/btn_focus"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="20dp"
+                android:layout_weight="1"
                 android:background="@drawable/focus" />
 
             <Button
-                android:id="@+id/btnReload"
-                android:layout_width="17dp"
-                android:layout_height="23dp"
+                android:id="@+id/btn_reload"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginTop="20dp"
+                android:layout_weight="1"
                 android:background="@drawable/reload" />
         </LinearLayout>
     </FrameLayout>

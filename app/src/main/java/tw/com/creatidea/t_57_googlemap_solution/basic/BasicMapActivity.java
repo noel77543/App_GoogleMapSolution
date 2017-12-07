@@ -185,6 +185,27 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+    //-----------------------------
+
+    /***
+     * 動畫前往
+     * @param latLng
+     * @param size
+     */
+    public void goToTargetLocationByAnimate(LatLng latLng,float size){
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, size));
+    }
+    //-----------------------------
+    /***
+     * 無動畫前往
+     * @param latLng
+     * @param size
+     */
+    public void goToTargetLocation(LatLng latLng,float size){
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, size));
+    }
+
+
 
     //------------- todo 抽象方法
 

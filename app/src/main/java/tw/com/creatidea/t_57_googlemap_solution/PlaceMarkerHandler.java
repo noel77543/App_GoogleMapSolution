@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
@@ -23,11 +24,13 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     private MainActivity activity;
     private PlaceInfo placeInfo;
     private LoadingCycleManager loadingCycleManager;
+    private ArrayList<Marker> placeMarkers;
 
-    public PlaceMarkerHandler(Activity activity, GoogleMap googleMap, PlaceInfo placeInfo) {
-        this.activity = (MainActivity)activity;
+    public PlaceMarkerHandler(Activity activity, GoogleMap googleMap, PlaceInfo placeInfo, ArrayList<Marker> placeMarkers) {
+        this.activity = (MainActivity) activity;
         this.googleMap = googleMap;
         this.placeInfo = placeInfo;
+        this.placeMarkers = placeMarkers;
     }
 
     @Override
@@ -40,18 +43,20 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
+        placeMarkers.clear();
         ArrayList<PlaceInfo.ResultsBean> resultDatas = placeInfo.getResults();
         for (int i = 0; i < resultDatas.size(); i++) {
             final String name = resultDatas.get(i).getName();
-            final LatLng latLng = new LatLng(resultDatas.get(i).getGeometry().getLocation().getLat(),resultDatas.get(i).getGeometry().getLocation().getLng());
+            final LatLng latLng = new LatLng(resultDatas.get(i).getGeometry().getLocation().getLat(), resultDatas.get(i).getGeometry().getLocation().getLng());
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    googleMap.addMarker(new MarkerOptions()
+                    Marker marker = googleMap.addMarker(new MarkerOptions()
                             .position((latLng))
                             .title(name)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.myicon))
                             .anchor(0.5f, 0.9f));
+                    placeMarkers.add(marker);
                 }
             });
         }

@@ -42,8 +42,8 @@ public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter {
         View v = context.getLayoutInflater().inflate(R.layout.map_info, null);
         ButterKnife.bind(this, v);
         tvName.setText(marker.getTitle());
-        tvLatitude.setText("經度：" + marker.getPosition().latitude);
-        tvLongitude.setText("緯度：" + marker.getPosition().longitude);
+        tvLatitude.setText("緯度：" + marker.getPosition().latitude);
+        tvLongitude.setText("經度：" + marker.getPosition().longitude);
         return v;
     }
 }
