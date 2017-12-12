@@ -18,12 +18,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import tw.com.creatidea.t_57_googlemap_solution.R;
+import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 
 /**
  * Created by noel on 2017/9/20.
  */
 
-public class DialogTargetChoose extends Dialog {
+public class TargetChooseDialog extends Dialog {
 
     @BindView(R.id.tv_type)
     TextView tvType;
@@ -38,7 +39,7 @@ public class DialogTargetChoose extends Dialog {
     private OnAcceptClickListener acceptClickListener;
     //-----------------------------------------------
 
-    public DialogTargetChoose(Context context) {
+    public TargetChooseDialog(Context context) {
         super(context);
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -52,7 +53,7 @@ public class DialogTargetChoose extends Dialog {
     }
     //-----------------------------------------------
 
-    public void setTitleType(String title ) {
+    public void setTitleType(String title) {
         tvType.setText(title);
     }
 
@@ -77,10 +78,23 @@ public class DialogTargetChoose extends Dialog {
     /**
      * 設置numberPicker的內容
      */
-    public void setStationData(String[] data) {
+    public void setStationData(PlaceInfo placeInfo) {
+        String[] names = getPlaceNamesArray(placeInfo);
         numberPicker.setMinValue(0);
-        numberPicker.setMaxValue(data.length - 1);
-        numberPicker.setDisplayedValues(data);
+        numberPicker.setMaxValue(names.length - 1);
+        numberPicker.setDisplayedValues(names);
+    }
+    //-----------------------------
+
+    /**
+     * 取得名稱
+     */
+    private String[] getPlaceNamesArray(PlaceInfo placeInfo) {
+        String[] names = new String[placeInfo.getResults().size()];
+        for (int i = 0; i < placeInfo.getResults().size(); i++) {
+            names[i] = placeInfo.getResults().get(i).getName();
+        }
+        return names;
     }
     //------------------
 

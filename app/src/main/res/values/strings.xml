@@ -1,8 +1,6 @@
 <resources>
-    <string name="app_name">Android-GoogleMap_Solution</string>
+    <string name="app_name">GoogleMapSolution</string>
     <string name="title_activity_maps">Map</string>
-
-    <string name="here">『 I`m Here ! 』</string>
     <string name="map_latitude">緯度：</string>
     <string name="map_longitude">經度：</string>
     <!--toast-->
@@ -54,6 +52,7 @@
     <string name="dialog_message_googlemap_getaddress">取得地址資訊...</string>
     <string name="dialog_message_googlemap_location">取得目前位置...</string>
     <string name="dialog_message_googlemap_place">取得地方資訊...</string>
+    <string name="dialog_message_googlemap_place_detail">取得該地點詳細資訊...</string>
     <string name="dialog_message_googlemap_place_already">已取得地方資訊,整備中...</string>
     <string name="toast_permission_error">此裝置沒有安裝Google Play服務。</string>
     <string name="toast_googlemap_connect_error">GoogleMap連線中斷，錯誤代碼%s</string>
@@ -64,9 +63,16 @@
     <string name="toast_server_error_googlemap_search_address">您輸入的地址資訊格式有誤,請再試一次。</string>
     <string name="toast_server_error_address">伺服器忙線中，無法取得地址資訊,請再試一次。</string>
     <string name="toast_server_error_place">伺服器忙線中，無法取得地方資訊,請再試一次。</string>
+    <string name="toast_server_error_place_detail">伺服器忙線中，無法取得該地點詳細資訊,請再試一次。</string>
+
     <string name="toast_server_error_distance">伺服器忙線中，無法取得距離與需時,請再試一次。</string>
     <string name="toast_googlemap_non_distance">目標地點不存在,無法取得距離與耗時。</string>
+    <string name="toast_googlemap_non_place_detail">該地點不存在詳細資訊。</string>
     <string name="toast_googlemap_non_place">鄰近地區不存在所選項目。</string>
     <string name="text_googlemap_non_address">目標不具備地址資訊。</string>
     <string name="snackbar_distance_googlemap">距離：%1$s  需時：%2$s</string>
+    <string name="snackbar_distance_googlemap_action">詳細資訊 ➢</string>
+    <string name="place_detail_status_is_working">營業中</string>
+    <string name="place_detail_status_not_working">休息</string>
+
 </resources>

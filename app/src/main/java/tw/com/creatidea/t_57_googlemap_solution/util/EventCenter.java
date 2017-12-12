@@ -12,6 +12,7 @@ import java.util.Map;
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.PlaceDetail;
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 
 /**
@@ -27,6 +28,7 @@ public class EventCenter {
     public static final int TYPE_DIRECTION = 444;
     public static final int TYPE_PLACE = 555;
     public static final int TYPE_DISTANCE = 666;
+//    public static final int TYPE_PLACE_DETAIL = 777;
 
 
     //--------------------------------------------------
@@ -104,7 +106,14 @@ public class EventCenter {
     public void sendPlace(int type, PlaceInfo placeInfo){
         sendObjectEvent(type, placeInfo);
     }
-
+//    //--------------------------------------------------
+//
+//    /**
+//     * 地方詳細資訊
+//     * */
+//    public void sendPlaceDetail(int type, PlaceDetail placeDetail){
+//        sendObjectEvent(type, placeDetail);
+//    }
     //---------
 
     /***

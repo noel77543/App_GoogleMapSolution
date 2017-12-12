@@ -46,7 +46,6 @@ import tw.com.creatidea.t_57_googlemap_solution.R;
  */
 
 public abstract class BasicMapActivity extends BasicLocationActivity implements OnMapReadyCallback {
-    private Marker searchMarker;
     //判斷是否初次進來 需聚焦在目前位置
     public GoogleMap googleMap;
     public LatLng currentLatlng;

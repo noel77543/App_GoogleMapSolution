@@ -3,16 +3,16 @@ package tw.com.creatidea.t_57_googlemap_solution;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
@@ -33,7 +33,7 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,23 +44,30 @@ import tw.com.creatidea.t_57_googlemap_solution.connect.GoogleConnect;
 import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
 import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.model.PlaceDetail;
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.NavigationDrawer;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.model.NavigationData;
-import tw.com.creatidea.t_57_googlemap_solution.util.DialogTargetChoose;
+import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
+import tw.com.creatidea.t_57_googlemap_solution.util.PlaceDetailPopupWindow;
+import tw.com.creatidea.t_57_googlemap_solution.util.TargetChooseDialog;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
+//import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE_DETAIL;
 
 /**
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, DialogTargetChoose.OnAcceptClickListener {
-
+public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
+    private Snackbar snackBar;
+    private Map<String, Marker> placeMarkerMap = new HashMap<>();
+    private Map<String, Integer> placeMarkerIndex = new HashMap<>();
+    private MyInfoAdapter adapter;
     //點選的目標點位
     private LatLng latLngTarget;
     private Marker markerTarget;
@@ -73,11 +80,11 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     private Polyline polyline;
     //drawer
     private NavigationDrawer navigationDrawer;
-    private DialogTargetChoose dialogTargetChoose;
+    private TargetChooseDialog targetChooseDialog;
     private PlaceInfo placeInfo;
-    private ArrayList<Marker> placeMarkers = new ArrayList<>();
     //劃線用 終點marker
     private Marker destinationMarker;
+    private String markerTitle;
 
     // butterknife
     @BindView(R.id.coordinator_layout)
@@ -88,12 +95,17 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     Button btnFocus;
     @BindView(R.id.btn_reload)
     Button btnReload;
+    @BindView(R.id.imageview)
+    ImageView imageview;
     @BindView(R.id.btn_search)
     Button btnSearch;
     @BindView(R.id.listview)
     public ListView listview;
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawerLayout;
+
+
+    private PlaceDetailPopupWindow placeDetailPopupWindow;
 
     @Override
     protected int getContentViewId() {
@@ -104,14 +116,46 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     protected void init() {
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
-        initGooglemapUtils();
-        dialogTargetChoose = new DialogTargetChoose(this);
-        dialogTargetChoose.setOnAcceptClickListener(this);
+        targetChooseDialog = new TargetChooseDialog(this);
+        targetChooseDialog.setOnAcceptClickListener(this);
         navigationDrawer = new NavigationDrawer(this);
         navigationDrawer.setOnNavigationItemClickListener(this);
+        adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
+        placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
+        initSnackbar();
+        initGooglemapUtils();
     }
     //----------
+
+    /***
+     * Snackbar 初始化
+     */
+    private void initSnackbar() {
+        snackBar = Snackbar
+                .make(coordinatorLayout, "", Snackbar.LENGTH_INDEFINITE)
+                .setActionTextColor(getResources().getColor(R.color.white))
+                .setAction(getString(R.string.snackbar_distance_googlemap_action), this);
+    }
+    //--------
+
+    /**
+     * snackbar用
+     */
+    @Override
+    public void onClick(View v) {
+        if (placeMarkerIndex.get(markerTitle) != null) {
+            PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
+            placeDetailPopupWindow.showSightFoodDescribePopupWindow(resultBeans);
+//            if (resultBeans != null) {
+//                connect.connectToGetPlaceDetail(resultBeans.getPlaceId());
+//            }
+        } else {
+            EventCenter.getInstance().sendConnectErrorEvent(getString(R.string.toast_googlemap_non_place_detail));
+        }
+    }
+    //----------
+
 
     /**
      * google map 地圖設定
@@ -119,8 +163,11 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     private void initGooglemapUtils() {
         //隱藏準心按鈕
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
-        googleMap.setInfoWindowAdapter(new MyInfoAdapter(this));//資訊視窗樣式
-        googleMap.setOnInfoWindowClickListener(this);// 資訊視窗點擊監聽
+        //資訊視窗樣式
+        googleMap.setInfoWindowAdapter(adapter);
+        // 資訊視窗點擊監聽
+        googleMap.setOnInfoWindowClickListener(this);
+        //MapClickListener
         googleMap.setOnMapClickListener(this);
     }
 
@@ -159,7 +206,6 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             addPolyLineOnMap(directionInfo);
             double targetLat = markerTarget == null ? destinationMarker.getPosition().latitude : markerTarget.getPosition().latitude;
             double targetLng = markerTarget == null ? destinationMarker.getPosition().longitude : markerTarget.getPosition().longitude;
-
             connect.connectToGetDistance(getUserLocation().getLatitude(), getUserLocation().getLongitude(), targetLat, targetLng);
 
             //地方資訊
@@ -167,38 +213,34 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             btnSearch.setVisibility(View.VISIBLE);
             placeInfo = (PlaceInfo) data.get("data");
             goToTargetLocationByAnimate(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), 16.0f);
-            dialogTargetChoose.setStationData(getPlaceNamesArray());
-            new PlaceMarkerHandler(this, googleMap, placeInfo, placeMarkers).execute();
+            targetChooseDialog.setStationData(placeInfo);
+            new PlaceMarkerHandler(this, googleMap, placeInfo, placeMarkerMap, placeMarkerIndex).execute();
 
             //error message
         } else if ((int) data.get("type") == TYPE_DISTANCE) {
             DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
-            String distance = ((double) distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10) + "公尺";
-            String time = ((double) distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) + "分";
+            String distance = (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10) + "公尺";
+            String time = (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) + "分";
+            snackBar.setText(String.format(getString(R.string.snackbar_distance_googlemap), distance, time));
+            snackBar.show();
 
-            Snackbar.make(coordinatorLayout, String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_LONG).show();
-
-        } else {
+            //詳細地方資訊
+        }
+//        else if ((int) data.get("type") == TYPE_PLACE_DETAIL) {
+//            PlaceDetail placeDetail = (PlaceDetail) data.get("data");
+//            PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
+//            placeDetailPopupWindow.showSightFoodDescribePopupWindow(resultBeans);
+//        }
+        else {
             String errString = (String) data.get("data");
             Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
             if (errString.equals(getString(R.string.toast_googlemap_non_place))) {
-                placeMarkers.clear();
+                placeMarkerMap.clear();
                 btnSearch.setVisibility(View.INVISIBLE);
             }
         }
     }
-    //-----------------------------
 
-    /**
-     * 取得名稱
-     */
-    private String[] getPlaceNamesArray() {
-        String[] names = new String[placeInfo.getResults().size()];
-        for (int i = 0; i < placeInfo.getResults().size(); i++) {
-            names[i] = placeInfo.getResults().get(i).getName();
-        }
-        return names;
-    }
     //-----------------------------
 
     /**
@@ -250,57 +292,6 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     }
     //----------
 
-    /***
-     *
-     * 當選擇側邊欄項目時 取得附近五百公尺內該項目位置
-     * @param parent
-     * @param view
-     * @param position
-     * @param id
-     */
-    @Override
-    public void onNavigationItemClick(AdapterView<?> parent, View view, int position, long id) {
-        googleMap.clear();
-        NavigationData navigation = (NavigationData) parent.getAdapter().getItem(position);
-        dialogTargetChoose.setTitleType(navigation.getTextCh());
-        connect.connectToGetPlace(getUserLocation().getLatitude() + "", getUserLocation().getLongitude() + "", navigation.getTextEn());
-    }
-    //----------
-
-    /***
-     * 當選擇place名稱後
-     * @param index
-     */
-    @Override
-    public void OnAcceptClick(int index) {
-        isInfoWindowShown = true;
-        Marker marker = placeMarkers.get(index);
-        marker.showInfoWindow();
-        goToTargetLocationByAnimate(marker.getPosition(), 20.0f);
-    }
-    //----------
-
-
-    @Override
-    public void onInfoWindowClick(final Marker marker) {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setMessage(MessageFormat.format(getString(R.string.toast_route), marker.getTitle()));
-        dialog.setPositiveButton(getString(R.string.permission_goahead), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                destinationMarker = marker;
-                String startLat = getUserLocation().getLatitude() + "";
-                String startLng = getUserLocation().getLongitude() + "";
-                String endLat = marker.getPosition().latitude + "";
-                String endLng = marker.getPosition().longitude + "";
-                connect.connectToGetDirection(startLat, startLng, endLat, endLng);
-            }
-        });
-        dialog.show();
-    }
-
-    //----------
-
     @Override
     public void onMapClick(LatLng latLng) {
         //每次繪製前這裡清除前一次繪製的路線
@@ -320,7 +311,61 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         }
     }
 
+
+    //----------
+
+
+    @Override
+    public void onInfoWindowClick(final Marker marker) {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage(MessageFormat.format(getString(R.string.toast_route), marker.getTitle()));
+        dialog.setPositiveButton(getString(R.string.permission_goahead), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                destinationMarker = marker;
+                String startLat = getUserLocation().getLatitude() + "";
+                String startLng = getUserLocation().getLongitude() + "";
+                String endLat = marker.getPosition().latitude + "";
+                String endLng = marker.getPosition().longitude + "";
+                connect.connectToGetDirection(startLat, startLng, endLat, endLng);
+                markerTitle = marker.getTitle();
+            }
+        });
+        dialog.show();
+    }
+    //----------
+
+    /***
+     *
+     * 當選擇側邊欄項目時 取得附近五百公尺內該項目位置
+     * @param parent
+     * @param view
+     * @param position
+     * @param id
+     */
+    @Override
+    public void onNavigationItemClick(AdapterView<?> parent, View view, int position, long id) {
+        googleMap.clear();
+        NavigationData navigation = (NavigationData) parent.getAdapter().getItem(position);
+        targetChooseDialog.setTitleType(navigation.getTextCh());
+        connect.connectToGetPlace(getUserLocation().getLatitude() + "", getUserLocation().getLongitude() + "", navigation.getTextEn());
+    }
+    //----------
+
+    /***
+     * 當選擇place名稱後
+     * @param index
+     */
+    @Override
+    public void OnAcceptClick(int index) {
+        isInfoWindowShown = true;
+        Marker marker = placeMarkerMap.get(placeInfo.getResults().get(index).getName());
+        marker.showInfoWindow();
+        goToTargetLocationByAnimate(marker.getPosition(), 20.0f);
+    }
+
     //--------
+
     // 進行 地址搜尋
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -351,8 +396,9 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 btnSearch.setVisibility(View.INVISIBLE);
                 checkPermissionsForResult();
                 break;
+
             case R.id.btn_search:
-                dialogTargetChoose.show();
+                targetChooseDialog.show();
                 break;
         }
     }
@@ -376,4 +422,5 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             e.printStackTrace();
         }
     }
+
 }

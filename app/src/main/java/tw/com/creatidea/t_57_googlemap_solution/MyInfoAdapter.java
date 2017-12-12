@@ -3,10 +3,13 @@ package tw.com.creatidea.t_57_googlemap_solution;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.Marker;
 
@@ -19,7 +22,7 @@ import butterknife.ButterKnife;
 
 public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter {
     @BindView(R.id.imageView)
-    ImageView imageView;
+    ImageView imageview;
     @BindView(R.id.tvName)
     TextView tvName;
     @BindView(R.id.tvLongitude)
@@ -27,7 +30,6 @@ public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter {
     @BindView(R.id.tvLatitude)
     TextView tvLatitude;
     private Activity context;
-
     public MyInfoAdapter(Activity context) {
         this.context = context;
     }

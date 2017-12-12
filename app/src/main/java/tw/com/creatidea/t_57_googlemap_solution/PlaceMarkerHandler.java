@@ -11,6 +11,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.util.LoadingCycleManager;
@@ -24,13 +25,15 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     private MainActivity activity;
     private PlaceInfo placeInfo;
     private LoadingCycleManager loadingCycleManager;
-    private ArrayList<Marker> placeMarkers;
+    private Map<String, Marker> placeMarkerMap;
+    private Map<String, Integer> placeMarkerIndex;
 
-    public PlaceMarkerHandler(Activity activity, GoogleMap googleMap, PlaceInfo placeInfo, ArrayList<Marker> placeMarkers) {
+    public PlaceMarkerHandler(Activity activity, GoogleMap googleMap, PlaceInfo placeInfo, Map<String, Marker> placeMarkerMap, Map<String, Integer> placeMarkerIndex) {
         this.activity = (MainActivity) activity;
         this.googleMap = googleMap;
         this.placeInfo = placeInfo;
-        this.placeMarkers = placeMarkers;
+        this.placeMarkerMap = placeMarkerMap;
+        this.placeMarkerIndex = placeMarkerIndex;
     }
 
     @Override
@@ -43,11 +46,12 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        placeMarkers.clear();
+        placeMarkerMap.clear();
         ArrayList<PlaceInfo.ResultsBean> resultDatas = placeInfo.getResults();
         for (int i = 0; i < resultDatas.size(); i++) {
             final String name = resultDatas.get(i).getName();
             final LatLng latLng = new LatLng(resultDatas.get(i).getGeometry().getLocation().getLat(), resultDatas.get(i).getGeometry().getLocation().getLng());
+            final int index = i;
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -56,9 +60,11 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
                             .title(name)
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.myicon))
                             .anchor(0.5f, 0.9f));
-                    placeMarkers.add(marker);
+                    placeMarkerMap.put(marker.getTitle(), marker);
+                    placeMarkerIndex.put(marker.getTitle(), index);
                 }
             });
+
         }
         return null;
     }
