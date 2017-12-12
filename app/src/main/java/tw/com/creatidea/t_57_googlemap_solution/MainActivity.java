@@ -63,7 +63,7 @@ import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLA
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
+public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener, PlaceDetailPopupWindow.OnMapIconClickListener {
     private Snackbar snackBar;
     private Map<String, Marker> placeMarkerMap = new HashMap<>();
     private Map<String, Integer> placeMarkerIndex = new HashMap<>();
@@ -123,6 +123,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
+        placeDetailPopupWindow.setOnMapIconClickListener(this);
         initSnackbar();
         initGooglemapUtils();
     }
@@ -147,9 +148,6 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         if (placeMarkerIndex.get(markerTitle) != null) {
             PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
             placeDetailPopupWindow.showSightFoodDescribePopupWindow(resultBeans);
-//            if (resultBeans != null) {
-//                connect.connectToGetPlaceDetail(resultBeans.getPlaceId());
-//            }
         } else {
             EventCenter.getInstance().sendConnectErrorEvent(getString(R.string.toast_googlemap_non_place_detail));
         }
@@ -223,15 +221,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             String time = (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) + "分";
             snackBar.setText(String.format(getString(R.string.snackbar_distance_googlemap), distance, time));
             snackBar.show();
-
-            //詳細地方資訊
-        }
-//        else if ((int) data.get("type") == TYPE_PLACE_DETAIL) {
-//            PlaceDetail placeDetail = (PlaceDetail) data.get("data");
-//            PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
-//            placeDetailPopupWindow.showSightFoodDescribePopupWindow(resultBeans);
-//        }
-        else {
+        } else {
             String errString = (String) data.get("data");
             Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
             if (errString.equals(getString(R.string.toast_googlemap_non_place))) {
@@ -402,7 +392,14 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 break;
         }
     }
-
+    //-------------
+    /**
+     * 當點選dialog中的地圖icon
+     * */
+    @Override
+    public void onMapIconClick(PlaceInfo.ResultsBean resultBeans) {
+        Log.e("goto",resultBeans.getGeometry().getLocation().getLat()+","+resultBeans.getGeometry().getLocation().getLng());
+    }
     //-----------------------------
 
     /**
@@ -422,5 +419,4 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             e.printStackTrace();
         }
     }
-
 }

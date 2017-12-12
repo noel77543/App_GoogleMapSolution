@@ -22,7 +22,7 @@ import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_G
  * Created by noel on 2017/12/8.
  */
 
-public class PlaceDetailPopupWindow extends BasicPopupWindow {
+public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnClickListener {
     private MainActivity mainActivity;
     private View view;
     private PlaceInfo.ResultsBean resultBeans;
@@ -32,6 +32,7 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow {
     private TextView placeDetailAddress;
     private TextView placeDetailStatus;
     private ImageView placeDetailPhoto;
+    private OnMapIconClickListener onMapIconClickListener;
 
     public PlaceDetailPopupWindow(Activity activity) {
         super(activity);
@@ -81,29 +82,23 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow {
         initPhoto();
         placeDetailTitle.setText(resultBeans.getName());
         placeDetailAddress.setText(resultBeans.getVicinity());
-//        if(resultBeans.getOpeningHours()!=null){
-            placeDetailStatus.setText(resultBeans.getOpeningHours().isOpenNow() ? mainActivity.getString(R.string.place_detail_status_is_working) : mainActivity.getString(R.string.place_detail_status_not_working));
-//        }
-//        placeDetailMessage.setText(getMessages(placeDetail.getResult().getReviews()));
+        placeDetailStatus.setText(resultBeans.getOpeningHours().isOpenNow() ? mainActivity.getString(R.string.place_detail_status_is_working) : mainActivity.getString(R.string.place_detail_status_not_working));
+        placeDetailAr.setOnClickListener(this);
+    }
+    //--------
+
+    @Override
+    public void onClick(View v) {
+        onMapIconClickListener.onMapIconClick(resultBeans);
     }
 
-//    //--------
-//
-//    /***
-//     * 處理地方詳細資訊中的留言
-//     */
-//    private String getMessages(ArrayList<PlaceDetail.ResultBean.ReviewsBean> reviewBeans) {
-//        StringBuilder sb = new StringBuilder();
-//        if(reviewBeans.size()>0){
-//            for (int i = 0; i < reviewBeans.size(); i++) {
-//                PlaceDetail.ResultBean.ReviewsBean reviewBean = reviewBeans.get(i);
-//                sb.append(reviewBean.getAuthorName() + ":" + reviewBean.getText());
-//            }
-//        }else {
-//            sb.append("");
-//        }
-//        return sb.toString();
-//    }
+    public interface OnMapIconClickListener {
+        void onMapIconClick(PlaceInfo.ResultsBean resultBeans);
+    }
+
+    public void setOnMapIconClickListener(OnMapIconClickListener onMapIconClickListener) {
+        this.onMapIconClickListener = onMapIconClickListener;
+    }
 
 
     //--------

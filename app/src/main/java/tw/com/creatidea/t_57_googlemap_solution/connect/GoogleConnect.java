@@ -2,13 +2,6 @@ package tw.com.creatidea.t_57_googlemap_solution.connect;
 
 import android.content.Context;
 import android.location.Geocoder;
-import android.support.annotation.NonNull;
-import android.util.Log;
-
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.PlaceBuffer;
-import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -35,7 +28,7 @@ import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIR
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE_DETAIL;
+//import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE_DETAIL;
 
 /**
  * Created by noel on 2017/8/16.
@@ -142,7 +135,7 @@ public class GoogleConnect extends BasicJsonConnect {
         params.put("destination", destination);
         params.put("mode", mode);
         params.put("key", key);
-
+        params.put("language", "zh-TW");
         loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
             loadingCycleManager.show();
@@ -316,6 +309,4 @@ public class GoogleConnect extends BasicJsonConnect {
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
     }
-
-    //-----------------
 }
