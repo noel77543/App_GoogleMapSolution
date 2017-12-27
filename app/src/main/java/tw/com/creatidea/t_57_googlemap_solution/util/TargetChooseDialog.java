@@ -18,7 +18,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import tw.com.creatidea.t_57_googlemap_solution.R;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
 
 /**
  * Created by noel on 2017/9/20.

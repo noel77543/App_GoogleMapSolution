@@ -9,11 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
-import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
-import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceDetail;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.AddressInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.DirectionInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.DistanceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
 
 /**
  * Created by noel on 2017/8/16.

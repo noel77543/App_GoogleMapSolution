@@ -11,10 +11,10 @@ import com.bumptech.glide.Glide;
 
 
 import butterknife.ButterKnife;
-import tw.com.creatidea.t_57_googlemap_solution.MainActivity;
+import tw.com.creatidea.t_57_googlemap_solution.main.MainActivity;
 import tw.com.creatidea.t_57_googlemap_solution.R;
 import tw.com.creatidea.t_57_googlemap_solution.basic.BasicPopupWindow;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
 
 import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_GOOGLE_PHOTO_REFERENCE;
 
@@ -82,7 +82,7 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnC
         initPhoto();
         placeDetailTitle.setText(resultBeans.getName());
         placeDetailAddress.setText(resultBeans.getVicinity());
-        placeDetailStatus.setText(resultBeans.getOpeningHours().isOpenNow() ? mainActivity.getString(R.string.place_detail_status_is_working) : mainActivity.getString(R.string.place_detail_status_not_working));
+        placeDetailStatus.setText(resultBeans.getOpeningHours() == null ? "" : resultBeans.getOpeningHours().isOpenNow() ? mainActivity.getString(R.string.place_detail_status_is_working) : mainActivity.getString(R.string.place_detail_status_not_working));
         placeDetailAr.setOnClickListener(this);
     }
     //--------
@@ -113,7 +113,12 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnC
                     .load(String.format(API_GOOGLE_PHOTO_REFERENCE, resultBeans.getPhotos().get(0).getPhotoReference(), mainActivity.getString(R.string.google_maps_key)))
                     .into(placeDetailPhoto);
         } else {
-            EventCenter.getInstance().sendConnectErrorEvent(mainActivity.getString(R.string.toast_googlemap_non_place_detail));
+            Glide
+                    .with(mainActivity)
+                    .load(0)
+                    .into(placeDetailPhoto);
+
+            EventCenter.getInstance().sendConnectErrorEvent(mainActivity.getString(R.string.toast_googlemap_non_place_image));
         }
 
     }

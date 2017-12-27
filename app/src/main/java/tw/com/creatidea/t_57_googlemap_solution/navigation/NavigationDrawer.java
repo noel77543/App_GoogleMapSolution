@@ -4,12 +4,11 @@ import android.content.Context;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import tw.com.creatidea.t_57_googlemap_solution.MainActivity;
+import tw.com.creatidea.t_57_googlemap_solution.main.MainActivity;
 import tw.com.creatidea.t_57_googlemap_solution.R;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.adapter.NavigationAdapter;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.model.NavigationData;

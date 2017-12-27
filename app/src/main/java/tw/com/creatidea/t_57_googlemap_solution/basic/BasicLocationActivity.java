@@ -15,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -31,8 +32,11 @@ import tw.com.creatidea.t_57_googlemap_solution.util.LoadingCycleManager;
  * Created by noel on 2017/12/5.
  */
 
-public abstract class BasicLocationActivity extends FragmentActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public abstract class BasicLocationActivity extends FragmentActivity
+        implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     final int LOCATION_PERMISSION_REQUEST = 1992;
     private onLocationChangeListener onLocationChangeListener;
@@ -49,7 +53,7 @@ public abstract class BasicLocationActivity extends FragmentActivity implements 
     /**
      * 檢查權限
      **/
-    public void checkPermissionsForResult() {
+    public void getLocationPermissionsWithCheck() {
         loadingCycleManager = new LoadingCycleManager(this);
         loadingCycleManager.setLoadingMessage(this.getString(R.string.dialog_message_googlemap_location));
         loadingCycleManager.show();
@@ -67,6 +71,7 @@ public abstract class BasicLocationActivity extends FragmentActivity implements 
                 goToSettingPermissions();
             }
         } else {//如果此app已經具備權限
+
             connectToGoogleMapServer();
         }
     }
@@ -230,9 +235,10 @@ public abstract class BasicLocationActivity extends FragmentActivity implements 
     }
 
     //-------------
+
     /**
      * 切換頁面的時候 關閉
-     * */
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -244,9 +250,10 @@ public abstract class BasicLocationActivity extends FragmentActivity implements 
         }
     }
     //-------------
+
     /**
      * 回到調用頁面的時候 開啟
-     * */
+     */
     @Override
     public void onResume() {
         super.onResume();

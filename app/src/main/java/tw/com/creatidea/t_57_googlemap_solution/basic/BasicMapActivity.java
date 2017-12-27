@@ -119,7 +119,7 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        checkPermissionsForResult();
+        getLocationPermissionsWithCheck();
     }
 
     //-------------

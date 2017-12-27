@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
-import tw.com.creatidea.t_57_googlemap_solution.MainActivity;
-import tw.com.creatidea.t_57_googlemap_solution.model.AddressInfo;
-import tw.com.creatidea.t_57_googlemap_solution.model.DirectionInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.MainActivity;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.AddressInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.DirectionInfo;
 import tw.com.creatidea.t_57_googlemap_solution.R;
-import tw.com.creatidea.t_57_googlemap_solution.model.DistanceInfo;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceDetail;
-import tw.com.creatidea.t_57_googlemap_solution.model.PlaceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.DistanceInfo;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceDetail;
+import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;

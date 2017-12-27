@@ -67,12 +67,24 @@
 
     <string name="toast_server_error_distance">伺服器忙線中，無法取得距離與需時,請再試一次。</string>
     <string name="toast_googlemap_non_distance">目標地點不存在,無法取得距離與耗時。</string>
-    <string name="toast_googlemap_non_place_detail">該地點不存在詳細資訊。</string>
+    <string name="toast_googlemap_non_place_image">該地點不具備圖片資訊。</string>
+    <string name="toast_googlemap_non_place_detail">該地點不具備位置資訊。</string>
+
     <string name="toast_googlemap_non_place">鄰近地區不存在所選項目。</string>
     <string name="text_googlemap_non_address">目標不具備地址資訊。</string>
     <string name="snackbar_distance_googlemap">距離：%1$s  需時：%2$s</string>
     <string name="snackbar_distance_googlemap_action">詳細資訊 ➢</string>
     <string name="place_detail_status_is_working">營業中</string>
     <string name="place_detail_status_not_working">休息</string>
+
+    <!--AR-->
+    <string name="ar_message_camera">是否同意開啟相機權限,以便執行AR導引功能。</string>
+    <string name="ar_refuse_camera">若拒絕此權限請求,即無法使用AR導引功能。</string>
+    <string name="ar_target_location">經度：%1$s\n緯度：%2$s</string>
+    <string name="ar_none_sensor">此裝置不具備方向傳感器</string>
+
+    <!--others-->
+    <string name="common_yes">是</string>
+    <string name="common_no">否</string>
 
 </resources>
