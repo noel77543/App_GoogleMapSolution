@@ -52,26 +52,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BasicJsonConnect.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/connect/BasicJsonConnect.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="585">
-              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/build.gradle">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2475">
-              <caret line="55" column="4" selection-start-line="55" selection-start-column="4" selection-end-line="55" selection-end-column="56" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="ConnectInfo.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/connect/ConnectInfo.java">
           <provider selected="true" editor-type-id="text-editor">
@@ -87,6 +67,18 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1935">
               <caret line="70" column="64" selection-start-line="70" selection-start-column="64" selection-end-line="70" selection-end-column="64" />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="build.gradle" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/app/build.gradle">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="341">
+              <caret line="73" column="27" selection-start-line="73" selection-start-column="27" selection-end-line="73" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -112,37 +104,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="popup_place_detail.xml" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/popup_place_detail.xml">
-          <provider editor-type-id="android-designer2">
-            <state />
-          </provider>
+      <file leaf-file-name="BundleInfo.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/BundleInfo.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="369">
-              <caret line="23" column="35" selection-start-line="23" selection-start-column="35" selection-end-line="23" selection-end-column="35" />
+            <state relative-caret-position="315">
+              <caret line="7" column="33" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="BasicLocationActivity.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/basic/BasicLocationActivity.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-314">
+              <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
               <folding>
-                <element signature="e#1076#1094#0" expanded="true" />
+                <element signature="imports" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PlaceInfo.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/main/model/PlaceInfo.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="strings.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2880">
-              <caret line="64" column="32" selection-start-line="64" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -1768,7 +1747,7 @@
     <option name="modificationStamps">
       <map>
         <entry key="C:\Users\User\Documents\Android-GoogleMap_Solution" value="4508944143423" />
-        <entry key="C:\Users\User\Documents\Demo_GoogleMapSolution" value="4558409002269" />
+        <entry key="C:\Users\User\Documents\Demo_GoogleMapSolution" value="4558422518916" />
       </map>
     </option>
     <option name="projectBuildClasspath">
@@ -2126,7 +2105,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/app/src/main/res/values/array.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/a_list_black_text_with_right_arrow.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/list_black_text_with_right_arrow.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/navigation/NavigationDrawer.java" />
@@ -2155,7 +2133,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/BundleInfo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/NewArActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/MySurfaceHolder.java" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/main/adapter/MyInfoAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/surfaceview/MySurfaceView.java" />
@@ -2169,7 +2146,6 @@
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/model/TargetData.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/util/SensorUtil.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/ArActivity.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/basic/BasicLocationActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/activity_main.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/connect/ConnectInfo.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/event/EventCenter.java" />
@@ -2177,6 +2153,9 @@
         <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/main/MainActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/a_popup_place_detail.xml" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/popup_place_detail.xml" />
+        <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/PlaceMarkerHandler.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/basic/BasicLocationActivity.java" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
       </list>
     </option>
   </component>
@@ -2322,6 +2301,28 @@
               <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Demo_GoogleMapSolution" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="t_57_googlemap_solution" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="basic" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
       <pane id="Scope">
@@ -2369,7 +2370,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../App_Painter/Painter" />
     <property name="device.picker.selection" value="F9AZCY16J845" />
     <property name="lastFolderRoot" value="$USER_HOME$/Desktop/loading_1.png" />
     <property name="android.project.structure.last.selected" value="app" />
@@ -2732,7 +2733,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32524806" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -2841,13 +2842,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/PlaceMarkerHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1119">
-          <caret line="57" column="75" selection-start-line="57" selection-start-column="75" selection-end-line="57" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/activity_new_ar.xml" />
     <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/ar/ArActivity.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -2881,13 +2875,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="116">
           <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/BundleInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
         </state>
       </provider>
     </entry>
@@ -2935,13 +2922,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
           <caret line="18" column="23" selection-start-line="18" selection-start-column="23" selection-end-line="18" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/basic/BasicLocationActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="91" column="65" selection-start-line="91" selection-start-column="65" selection-end-line="91" selection-end-column="65" />
         </state>
       </provider>
     </entry>
@@ -2999,14 +2979,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2475">
-          <caret line="55" column="4" selection-start-line="55" selection-start-column="4" selection-end-line="55" selection-end-column="56" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/values/strings.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2880">
@@ -3019,7 +2991,135 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
           <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#595#596#0" expanded="false" />
+            <element signature="e#631#632#0" expanded="false" />
+            <element signature="e#689#690#0" expanded="false" />
+            <element signature="e#739#740#0" expanded="false" />
+            <element signature="e#772#773#0" expanded="false" />
+            <element signature="e#801#802#0" expanded="false" />
+            <element signature="e#845#846#0" expanded="false" />
+            <element signature="e#881#882#0" expanded="false" />
+            <element signature="e#930#931#0" expanded="false" />
+            <element signature="e#969#970#0" expanded="false" />
+            <element signature="e#1145#1146#0" expanded="false" />
+            <element signature="e#1175#1176#0" expanded="false" />
+            <element signature="e#1237#1238#0" expanded="false" />
+            <element signature="e#1275#1276#0" expanded="false" />
+            <element signature="e#3384#3385#0" expanded="false" />
+            <element signature="e#3423#3424#0" expanded="false" />
+            <element signature="e#3481#3482#0" expanded="false" />
+            <element signature="e#3529#3530#0" expanded="false" />
+            <element signature="e#3564#3565#0" expanded="false" />
+            <element signature="e#3599#3600#0" expanded="false" />
+            <element signature="e#3643#3644#0" expanded="false" />
+            <element signature="e#3683#3684#0" expanded="false" />
+            <element signature="e#3716#3717#0" expanded="false" />
+            <element signature="e#3749#3750#0" expanded="false" />
+            <element signature="e#3789#3790#0" expanded="false" />
+            <element signature="e#3825#3826#0" expanded="false" />
+            <element signature="e#3860#3861#0" expanded="false" />
+            <element signature="e#3895#3896#0" expanded="false" />
+            <element signature="e#3939#3940#0" expanded="false" />
+            <element signature="e#3979#3980#0" expanded="false" />
+            <element signature="e#4032#4033#0" expanded="false" />
+            <element signature="e#4075#4076#0" expanded="false" />
+            <element signature="e#4239#4240#0" expanded="false" />
+            <element signature="e#4277#4278#0" expanded="false" />
+            <element signature="e#4327#4328#0" expanded="false" />
+            <element signature="e#4373#4374#0" expanded="false" />
+            <element signature="e#4410#4411#0" expanded="false" />
+            <element signature="e#4447#4448#0" expanded="false" />
+            <element signature="e#4495#4496#0" expanded="false" />
+            <element signature="e#4539#4540#0" expanded="false" />
+            <element signature="e#4579#4580#0" expanded="false" />
+            <element signature="e#4619#4620#0" expanded="false" />
+            <element signature="e#4673#4674#0" expanded="false" />
+            <element signature="e#4723#4724#0" expanded="false" />
+            <element signature="e#4759#4760#0" expanded="false" />
+            <element signature="e#4795#4796#0" expanded="false" />
+            <element signature="e#4841#4842#0" expanded="false" />
+            <element signature="e#4883#4884#0" expanded="false" />
+            <element signature="e#4922#4923#0" expanded="false" />
+            <element signature="e#4961#4962#0" expanded="false" />
+            <element signature="e#5013#5014#0" expanded="false" />
+            <element signature="e#5061#5062#0" expanded="false" />
+            <element signature="e#5113#5114#0" expanded="false" />
+            <element signature="e#5150#5151#0" expanded="false" />
+            <element signature="e#5213#5214#0" expanded="false" />
+            <element signature="e#5257#5258#0" expanded="false" />
+            <element signature="e#5304#5305#0" expanded="false" />
+            <element signature="e#5340#5341#0" expanded="false" />
+            <element signature="e#5397#5398#0" expanded="false" />
+            <element signature="e#5439#5440#0" expanded="false" />
+            <element signature="e#6230#6231#0" expanded="false" />
+            <element signature="e#6262#6263#0" expanded="false" />
+            <element signature="e#6867#6868#0" expanded="false" />
+            <element signature="e#6925#6926#0" expanded="false" />
+            <element signature="e#7002#7003#0" expanded="false" />
+            <element signature="e#7062#7063#0" expanded="false" />
+            <element signature="e#7582#7583#0" expanded="false" />
+            <element signature="e#7629#7630#0" expanded="false" />
+            <element signature="e#7691#7692#0" expanded="false" />
+            <element signature="e#7747#7748#0" expanded="false" />
+            <element signature="e#7796#7797#0" expanded="false" />
+            <element signature="e#7843#7844#0" expanded="false" />
+            <element signature="e#7905#7906#0" expanded="false" />
+            <element signature="e#7961#7962#0" expanded="false" />
+            <element signature="e#8316#8317#0" expanded="false" />
+            <element signature="e#8366#8367#0" expanded="false" />
+            <element signature="e#8416#8417#0" expanded="false" />
+            <element signature="e#8470#8471#0" expanded="false" />
+            <element signature="e#8512#8513#0" expanded="false" />
+            <element signature="e#8562#8563#0" expanded="false" />
+            <element signature="e#8612#8613#0" expanded="false" />
+            <element signature="e#8666#8667#0" expanded="false" />
+            <element signature="e#9172#9173#0" expanded="false" />
+            <element signature="e#9228#9229#0" expanded="false" />
+            <element signature="e#9297#9298#0" expanded="false" />
+            <element signature="e#9363#9364#0" expanded="false" />
+            <element signature="e#9418#9419#0" expanded="false" />
+            <element signature="e#9474#9475#0" expanded="false" />
+            <element signature="e#9543#9544#0" expanded="false" />
+            <element signature="e#9609#9610#0" expanded="false" />
+            <element signature="e#10016#10017#0" expanded="false" />
+            <element signature="e#10074#10075#0" expanded="false" />
+            <element signature="e#10128#10129#0" expanded="false" />
+            <element signature="e#10190#10191#0" expanded="false" />
+            <element signature="e#10236#10237#0" expanded="false" />
+            <element signature="e#10294#10295#0" expanded="false" />
+            <element signature="e#10348#10349#0" expanded="false" />
+            <element signature="e#10410#10411#0" expanded="false" />
+            <element signature="e#10835#10836#0" expanded="false" />
+            <element signature="e#10893#10894#0" expanded="false" />
+            <element signature="e#10947#10948#0" expanded="false" />
+            <element signature="e#11009#11010#0" expanded="false" />
+            <element signature="e#11055#11056#0" expanded="false" />
+            <element signature="e#11113#11114#0" expanded="false" />
+            <element signature="e#11167#11168#0" expanded="false" />
+            <element signature="e#11229#11230#0" expanded="false" />
+            <element signature="e#11625#11626#0" expanded="false" />
+            <element signature="e#11671#11672#0" expanded="false" />
+            <element signature="e#11726#11727#0" expanded="false" />
+            <element signature="e#11780#11781#0" expanded="false" />
+            <element signature="e#11832#11833#0" expanded="false" />
+            <element signature="e#11882#11883#0" expanded="false" />
+            <element signature="e#11950#11951#0" expanded="false" />
+            <element signature="e#12012#12013#0" expanded="false" />
+            <element signature="e#12782#12783#0" expanded="false" />
+            <element signature="e#12827#12828#0" expanded="false" />
+            <element signature="e#12876#12877#0" expanded="false" />
+            <element signature="e#12928#12929#0" expanded="false" />
+            <element signature="e#12977#12978#0" expanded="false" />
+            <element signature="e#13030#13031#0" expanded="false" />
+            <element signature="e#13203#13204#0" expanded="false" />
+            <element signature="e#13247#13248#0" expanded="false" />
+            <element signature="e#13294#13295#0" expanded="false" />
+            <element signature="e#13344#13345#0" expanded="false" />
+            <element signature="e#13401#13402#0" expanded="false" />
+            <element signature="e#13456#13457#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3035,7 +3135,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1935">
           <caret line="70" column="64" selection-start-line="70" selection-start-column="64" selection-end-line="70" selection-end-column="64" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -3057,6 +3159,38 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/popup_place_detail.xml">
+      <provider editor-type-id="android-designer2">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="16" column="36" selection-start-line="16" selection-start-column="36" selection-end-line="16" selection-end-column="36" />
+          <folding>
+            <element signature="e#1076#1094#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/BundleInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="7" column="33" selection-start-line="7" selection-start-column="33" selection-end-line="7" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/PlaceMarkerHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="14" column="47" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding>
+            <element signature="e#2280#2831#0" expanded="true" />
+            <element signature="e#2830#2831#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/util/PlaceDetailPopupWindow.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="180">
@@ -3065,16 +3199,21 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/popup_place_detail.xml">
-      <provider editor-type-id="android-designer2">
-        <state />
-      </provider>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/tw/com/creatidea/t_57_googlemap_solution/basic/BasicLocationActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="369">
-          <caret line="23" column="35" selection-start-line="23" selection-start-column="35" selection-end-line="23" selection-end-column="35" />
+        <state relative-caret-position="-314">
+          <caret line="43" column="0" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
           <folding>
-            <element signature="e#1076#1094#0" expanded="true" />
+            <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="73" column="27" selection-start-line="73" selection-start-column="27" selection-end-line="73" selection-end-column="27" />
+          <folding />
         </state>
       </provider>
     </entry>

@@ -13,9 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.util.Log;
+
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -25,6 +23,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Places;
 
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnNeverAskAgain;
+import permissions.dispatcher.OnPermissionDenied;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
+import permissions.dispatcher.RuntimePermissions;
 import tw.com.creatidea.t_57_googlemap_solution.R;
 import tw.com.creatidea.t_57_googlemap_solution.util.LoadingCycleManager;
 
@@ -32,13 +36,12 @@ import tw.com.creatidea.t_57_googlemap_solution.util.LoadingCycleManager;
  * Created by noel on 2017/12/5.
  */
 
-public abstract class BasicLocationActivity extends FragmentActivity
-        implements
+@RuntimePermissions
+public abstract class BasicLocationActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
 
-    final int LOCATION_PERMISSION_REQUEST = 1992;
     private onLocationChangeListener onLocationChangeListener;
     // Google API用戶端物件
     public GoogleApiClient googleApiClient;
@@ -48,6 +51,32 @@ public abstract class BasicLocationActivity extends FragmentActivity
     private boolean isFirstIn = true;
     private Location userLocation;
 
+    @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void AllowedGetMyLocation() {
+        connectToGoogleMapServer();
+    }
+
+    @OnShowRationale({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onShowRationale(final PermissionRequest request) {
+        request.proceed();
+    }
+
+    @OnPermissionDenied({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onPermissionDenied() {
+        Toast.makeText(this, getString(R.string.toast_permission_refuse), Toast.LENGTH_SHORT).show();
+    }
+
+    @OnNeverAskAgain({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+    void onNeverAskAgain() {
+        goToSettingPermissions();
+    }
+
+    //-----------------------------
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        BasicLocationActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+    }
     //-------------
 
     /**
@@ -57,23 +86,7 @@ public abstract class BasicLocationActivity extends FragmentActivity
         loadingCycleManager = new LoadingCycleManager(this);
         loadingCycleManager.setLoadingMessage(this.getString(R.string.dialog_message_googlemap_location));
         loadingCycleManager.show();
-
-        final int PERMISSION_ACCESS_FINE_LOCATION = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        final int PERMISSION_ACCESS_COARSE_LOCATION = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
-        //欲申請的權限
-        String[] locationPermissions = new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        if (PERMISSION_ACCESS_FINE_LOCATION == PackageManager.PERMISSION_DENIED && PERMISSION_ACCESS_COARSE_LOCATION == PackageManager.PERMISSION_DENIED) {
-            //申請權限
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(this, locationPermissions, LOCATION_PERMISSION_REQUEST);
-            } else {
-                goToSettingPermissions();
-            }
-        } else {//如果此app已經具備權限
-
-            connectToGoogleMapServer();
-        }
+        BasicLocationActivityPermissionsDispatcher.AllowedGetMyLocationWithCheck(this);
     }
 
     //-----------------------------
@@ -93,28 +106,8 @@ public abstract class BasicLocationActivity extends FragmentActivity
                 startActivity(settings);
             }
         });
-
         alert.show();
     }
-
-    //-----------------------------
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST: {
-                //若拒絕則grantResults[] 資料長度是0
-                if (grantResults.length > 0) {  //允許
-                    //同意後做的事情
-                    connectToGoogleMapServer();
-                } else {//拒絕
-                    Toast.makeText(this, getString(R.string.toast_permission_refuse), Toast.LENGTH_SHORT).show();
-                }
-                break;
-            }
-        }
-    }
-
 
     //-------------
 
@@ -280,6 +273,7 @@ public abstract class BasicLocationActivity extends FragmentActivity
      * 當接收google map的response後的  子class執行的行為起始點  負責處理只進行一次的行為 初始化 等
      */
     protected abstract void onLocationGet(Location location);
+
     //-------------
 
     /**
@@ -294,3 +288,4 @@ public abstract class BasicLocationActivity extends FragmentActivity
         this.onLocationChangeListener = onLocationChangeListener;
     }
 }
+

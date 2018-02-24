@@ -39,30 +39,40 @@ dependencies {
 
     //google map
 //    compile 'com.google.android.gms:play-services-maps:10.2.0'
-    //location
-    //place
-    //design
-    //async-http
-    //butterknife
-    //event bus
-    //Gson
-    //glide
-    //PermissionsDispatcher
+
+    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+    //location
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
     compile 'com.google.android.gms:play-services-location:10.2.0'
+
+    //place
     compile 'com.google.android.gms:play-services-places:10.2.0'
+
+    //design
     compile 'com.android.support:design:25.0.0'
+
+    //async-http
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
+
+    //Gson
     compile 'com.google.code.gson:gson:2.8.0'
+
+    //glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    testCompile 'junit:junit:4.12'
+
+    //butterknife
+    compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    //event bus
+    compile 'org.greenrobot:eventbus:3.0.0'
     apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
+
+    //PermissionsDispatcher
+    compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
 }
 
