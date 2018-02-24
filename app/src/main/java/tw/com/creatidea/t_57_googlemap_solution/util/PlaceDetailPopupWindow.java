@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 
 
 import butterknife.ButterKnife;
+import tw.com.creatidea.t_57_googlemap_solution.event.EventCenter;
 import tw.com.creatidea.t_57_googlemap_solution.main.MainActivity;
 import tw.com.creatidea.t_57_googlemap_solution.R;
 import tw.com.creatidea.t_57_googlemap_solution.basic.BasicPopupWindow;
@@ -22,17 +23,16 @@ import static tw.com.creatidea.t_57_googlemap_solution.connect.ConnectInfo.API_G
  * Created by noel on 2017/12/8.
  */
 
-public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnClickListener {
+public class PlaceDetailPopupWindow extends BasicPopupWindow {
     private MainActivity mainActivity;
     private View view;
     private PlaceInfo.ResultsBean resultBeans;
 
-    private ImageView placeDetailAr;
+//    private ImageView placeDetailAr;
     private TextView placeDetailTitle;
     private TextView placeDetailAddress;
     private TextView placeDetailStatus;
     private ImageView placeDetailPhoto;
-    private OnMapIconClickListener onMapIconClickListener;
 
     public PlaceDetailPopupWindow(Activity activity) {
         super(activity);
@@ -58,14 +58,14 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnC
     private void initSightFoodDescribePopupWindow() {
         LayoutInflater inflater = LayoutInflater.from(mainActivity);
         if (view == null) { //todo 同container觀念  _noel
-            view = inflater.inflate(R.layout.a_popup_place_detail, null);
+            view = inflater.inflate(R.layout.popup_place_detail, null);
             ButterKnife.bind(this, view);
             setContentView(view);
             placeDetailPhoto = ButterKnife.findById(view, R.id.imageview);
             placeDetailTitle = ButterKnife.findById(view, R.id.tv_title);
             placeDetailAddress = ButterKnife.findById(view, R.id.tv_address);
             placeDetailStatus = ButterKnife.findById(view, R.id.tv_status);
-            placeDetailAr = ButterKnife.findById(view, R.id.iv_goto_ar);
+//            placeDetailAr = ButterKnife.findById(view, R.id.iv_goto_ar);
         }
         setPlaceDetailDataOnViews();
 
@@ -83,22 +83,9 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow implements View.OnC
         placeDetailTitle.setText(resultBeans.getName());
         placeDetailAddress.setText(resultBeans.getVicinity());
         placeDetailStatus.setText(resultBeans.getOpeningHours() == null ? "" : resultBeans.getOpeningHours().isOpenNow() ? mainActivity.getString(R.string.place_detail_status_is_working) : mainActivity.getString(R.string.place_detail_status_not_working));
-        placeDetailAr.setOnClickListener(this);
-    }
-    //--------
-
-    @Override
-    public void onClick(View v) {
-        onMapIconClickListener.onMapIconClick(resultBeans);
+//        placeDetailAr.setOnClickListener(this);
     }
 
-    public interface OnMapIconClickListener {
-        void onMapIconClick(PlaceInfo.ResultsBean resultBeans);
-    }
-
-    public void setOnMapIconClickListener(OnMapIconClickListener onMapIconClickListener) {
-        this.onMapIconClickListener = onMapIconClickListener;
-    }
 
 
     //--------

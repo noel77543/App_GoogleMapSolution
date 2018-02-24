@@ -21,14 +21,14 @@ import tw.com.creatidea.t_57_googlemap_solution.R;
 import tw.com.creatidea.t_57_googlemap_solution.main.model.DistanceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceDetail;
 import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
-import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
+import tw.com.creatidea.t_57_googlemap_solution.event.EventCenter;
 
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
-//import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE_DETAIL;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_DIRECTION;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_DISTANCE;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_LOCATION;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_PLACE;
+//import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_PLACE_DETAIL;
 
 /**
  * Created by noel on 2017/8/16.

@@ -52,24 +52,24 @@ import tw.com.creatidea.t_57_googlemap_solution.main.model.DistanceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.main.model.PlaceInfo;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.NavigationDrawer;
 import tw.com.creatidea.t_57_googlemap_solution.navigation.model.NavigationData;
-import tw.com.creatidea.t_57_googlemap_solution.util.EventCenter;
+import tw.com.creatidea.t_57_googlemap_solution.event.EventCenter;
 import tw.com.creatidea.t_57_googlemap_solution.util.PlaceDetailPopupWindow;
 import tw.com.creatidea.t_57_googlemap_solution.util.TargetChooseDialog;
 
 import static tw.com.creatidea.t_57_googlemap_solution.util.BundleInfo.LAT;
 import static tw.com.creatidea.t_57_googlemap_solution.util.BundleInfo.LNG;
 import static tw.com.creatidea.t_57_googlemap_solution.util.BundleInfo.PLACE_NAME;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_ADDRESS;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DIRECTION;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_DISTANCE;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_LOCATION;
-import static tw.com.creatidea.t_57_googlemap_solution.util.EventCenter.TYPE_PLACE;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_ADDRESS;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_DIRECTION;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_DISTANCE;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_LOCATION;
+import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_PLACE;
 
 /**
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener, PlaceDetailPopupWindow.OnMapIconClickListener {
+public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
     private Snackbar snackBar;
     private Map<String, Marker> placeMarkerMap = new HashMap<>();
     private Map<String, Integer> placeMarkerIndex = new HashMap<>();
@@ -129,7 +129,6 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
-        placeDetailPopupWindow.setOnMapIconClickListener(this);
         initSnackbar();
         initGooglemapUtils();
     }
@@ -385,23 +384,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 break;
         }
     }
-    //-------------
-    /**
-     * 當點選dialog中的地圖icon
-     * */
-    @Override
-    public void onMapIconClick(PlaceInfo.ResultsBean resultBeans) {
-        Bundle bundle = new Bundle();
-        bundle.putDouble(LAT,resultBeans.getGeometry().getLocation().getLat());
-        bundle.putDouble(LNG,resultBeans.getGeometry().getLocation().getLng());
-        bundle.putString(PLACE_NAME,resultBeans.getName());
 
-        Intent intent = new Intent();
-        intent.setClass(this, ArActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtras(bundle);
-        startActivity(intent);
-    }
     //--------
 
     /**

@@ -148,8 +148,6 @@ public abstract class BasicLocationActivity extends FragmentActivity
                 .addOnConnectionFailedListener(this)
                 //位置
                 .addApi(LocationServices.API)
-//                //places
-//                .addApi(Places.GEO_DATA_API)
                 .build();
     }
 
