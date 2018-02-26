@@ -1,0 +1,90 @@
+<resources>
+    <string name="app_name">GoogleMap個人使用統整</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="map_latitude">緯度：</string>
+    <string name="map_longitude">經度：</string>
+    <!--toast-->
+    <string name="toast_enteraddress">請輸入正確地址後再次嘗試</string>
+    <string name="toast_neepermission">此行為需要位置權限</string>
+    <string name="toast_noninfomation">點選的位置不具備地址資訊</string>
+    <string name="toast_route">取得前往：「{0}」的最佳路徑？</string>
+
+    <!--progressdialog-->
+    <string name="text_loading">搜索中...</string>
+    <string name="hint_edit">" "請輸入想搜尋的地址</string>
+    <string name="text_connect">請稍候...</string>
+
+    <!--api地址轉經緯度錯誤-->
+    <string name="api_wrong">INVALID_REQUEST</string>
+
+    <!--dialog-->
+    <string name="permission_gotocheck">前往設定權限？</string>
+    <string name="permission_goahead">前往</string>
+    <string name="toast_net_cant_work">請確認網路訊號狀況後，再試一次。</string>
+
+    <!--navigation-->
+    <string name="place_item_airport_ch">機場</string>
+    <string name="place_item_restaurant_ch">餐廳</string>
+    <string name="place_item_cafe_ch">咖啡廳</string>
+    <string name="place_item_bank_ch">銀行</string>
+    <string name="place_item_atm_ch">ATM</string>
+    <string name="place_item_hospital_ch">醫院</string>
+    <string name="place_item_library_ch">圖書館</string>
+    <string name="place_item_park_ch">公園</string>
+    <string name="place_item_parking_ch">停車場</string>
+    <string name="place_item_post_office_ch">郵局</string>
+    <string name="place_item_police_ch">警察局</string>
+
+    <string name="place_item_airport_en">airport</string>
+    <string name="place_item_restaurant_en">restaurant</string>
+    <string name="place_item_cafe_en">cafe</string>
+    <string name="place_item_bank_en">bank</string>
+    <string name="place_item_atm_en">atm</string>
+    <string name="place_item_hospital_en">hospital</string>
+    <string name="place_item_library_en">library</string>
+    <string name="place_item_park_en">park</string>
+    <string name="place_item_parking_en">parking</string>
+    <string name="place_item_post_office_en">post_office</string>
+    <string name="place_item_police_en">police</string>
+
+    <!--others-->
+    <string name="dialog_choose">選擇</string>
+    <string name="dialog_message_googlemap_getaddress">取得地址資訊...</string>
+    <string name="dialog_message_googlemap_location">取得目前位置...</string>
+    <string name="dialog_message_googlemap_place">取得地方資訊...</string>
+    <string name="dialog_message_googlemap_place_detail">取得該地點詳細資訊...</string>
+    <string name="dialog_message_googlemap_place_already">已取得地方資訊,整備中...</string>
+    <string name="toast_permission_error">此裝置沒有安裝Google Play服務。</string>
+    <string name="toast_googlemap_connect_error">GoogleMap連線中斷，錯誤代碼%s</string>
+    <string name="toast_permission_refuse">拒絕權限要求,將無法使用此功能。</string>
+    <string name="dialog_message_goto_setting">是否前往開啟權限？</string>
+    <string name="dialog_go">前往</string>
+    <string name="toast_googlemap_location_error">無法取得目前位置。</string>
+    <string name="toast_server_error_googlemap_search_address">您輸入的地址資訊格式有誤,請再試一次。</string>
+    <string name="toast_server_error_address">伺服器忙線中，無法取得地址資訊,請再試一次。</string>
+    <string name="toast_server_error_place">伺服器忙線中，無法取得地方資訊,請再試一次。</string>
+    <string name="toast_server_error_place_detail">伺服器忙線中，無法取得該地點詳細資訊,請再試一次。</string>
+
+    <string name="toast_server_error_distance">伺服器忙線中，無法取得距離與需時,請再試一次。</string>
+    <string name="toast_googlemap_non_distance">目標地點不存在,無法取得距離與耗時。</string>
+    <string name="toast_googlemap_non_place_image">該地點不具備圖片資訊。</string>
+    <string name="toast_googlemap_non_place_detail">該地點不具備位置資訊。</string>
+
+    <string name="toast_googlemap_non_place">鄰近地區不存在所選項目。</string>
+    <string name="text_googlemap_non_address">目標不具備地址資訊。</string>
+    <string name="snackbar_distance_googlemap">距離：%1$s  需時：%2$s</string>
+    <string name="snackbar_distance_googlemap_action">詳細資訊 ➢</string>
+    <string name="place_detail_status_is_working">營業中</string>
+    <string name="place_detail_status_not_working">休息</string>
+
+    <!--AR-->
+    <string name="ar_message_camera">是否同意開啟相機權限,以便執行AR導引功能。</string>
+    <string name="ar_refuse_camera">若拒絕此權限請求,即無法使用AR導引功能。</string>
+    <string name="ar_target_location">經度：%1$s\n緯度：%2$s</string>
+    <string name="ar_none_sensor">此裝置不具備方向傳感器</string>
+
+    <!--others-->
+    <string name="common_yes">是</string>
+    <string name="common_no">否</string>
+
+</resources>
