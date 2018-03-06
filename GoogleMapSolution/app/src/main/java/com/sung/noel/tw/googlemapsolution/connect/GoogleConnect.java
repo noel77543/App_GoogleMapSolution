@@ -29,7 +29,6 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTIO
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DISTANCE;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_LOCATION;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
-//import static tw.com.creatidea.t_57_googlemap_solution.event.EventCenter.TYPE_PLACE_DETAIL;
 
 /**
  * Created by noel on 2017/8/16.
@@ -60,33 +59,33 @@ public class GoogleConnect extends BasicJsonConnect {
         RequestParams params = new RequestParams();
         params.put("latlng", latitude + "," + longitude);
         params.put("language", "zh-TW");
-        loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
+        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
-            loadingCycleManager.show();
+            loadingImageCircleDialog.showLoadingDialog();
             client.get(ConnectInfo.API_GOOGLE_GEOCODE, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     addressInfo = new Gson().fromJson(response.toString(), AddressInfo.class);
                     EventCenter.getInstance().sendAddress(TYPE_ADDRESS, addressInfo);
                 }
 
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
             });
         } else {
-            loadingCycleManager.dismiss();
+            loadingImageCircleDialog.dismiss();
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
     }
@@ -137,33 +136,33 @@ public class GoogleConnect extends BasicJsonConnect {
         params.put("mode", mode);
         params.put("key", key);
         params.put("language", "zh-TW");
-        loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
+        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
-            loadingCycleManager.show();
+            loadingImageCircleDialog.showLoadingDialog();
             client.get(ConnectInfo.API_GOOGLE_DIRECTION, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     directionInfo = new Gson().fromJson(response.toString(), DirectionInfo.class);
                     EventCenter.getInstance().sendRoute(TYPE_DIRECTION, directionInfo);
                 }
 
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
             });
         } else {
-            loadingCycleManager.dismiss();
+            loadingImageCircleDialog.dismiss();
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
     }
@@ -180,14 +179,14 @@ public class GoogleConnect extends BasicJsonConnect {
         params.put("language", "zh-tw");
         params.put("key", context.getString(R.string.google_maps_key));
 
-        loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
+        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
         if (isNetWorkable()) {
-            loadingCycleManager.show();
+            loadingImageCircleDialog.showLoadingDialog();
             client.get(ConnectInfo.API_GOOGLE_PLACE, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     placeInfo = new Gson().fromJson(response.toString(), PlaceInfo.class);
                     if (placeInfo.getStatus().equals("OK")) {
                         EventCenter.getInstance().sendPlace(TYPE_PLACE, placeInfo);
@@ -199,19 +198,19 @@ public class GoogleConnect extends BasicJsonConnect {
 
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
                 }
             });
         } else {
-            loadingCycleManager.dismiss();
+            loadingImageCircleDialog.dismiss();
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
     }
@@ -275,14 +274,14 @@ public class GoogleConnect extends BasicJsonConnect {
         params.put("language", "zh-tw");
         params.put("key", context.getString(R.string.google_maps_key));
 
-        loadingCycleManager.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
+        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
         if (isNetWorkable()) {
-            loadingCycleManager.show();
+            loadingImageCircleDialog.showLoadingDialog();
             client.get(ConnectInfo.API_GOOGLE_MATRIX, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                     super.onSuccess(statusCode, headers, response);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     distanceInfo = new Gson().fromJson(response.toString(), DistanceInfo.class);
                     if (distanceInfo.getStatus().equals("OK")) {
                         EventCenter.getInstance().sendDistance(TYPE_DISTANCE, distanceInfo);
@@ -294,19 +293,19 @@ public class GoogleConnect extends BasicJsonConnect {
 
                 @Override
                 public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingCycleManager.dismiss();
+                    loadingImageCircleDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
                 }
             });
         } else {
-            loadingCycleManager.dismiss();
+            loadingImageCircleDialog.dismiss();
             EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_net_cant_work));
         }
     }

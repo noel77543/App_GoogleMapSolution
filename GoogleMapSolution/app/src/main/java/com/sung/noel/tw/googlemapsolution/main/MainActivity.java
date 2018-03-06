@@ -388,7 +388,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     public void onClick(View v) {
         if (placeMarkerIndex.get(markerTitle) != null) {
             PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
-            placeDetailPopupWindow.showSightFoodDescribePopupWindow(resultBeans);
+            placeDetailPopupWindow.showPopupWindow(resultBeans);
         } else {
             EventCenter.getInstance().sendConnectErrorEvent(getString(R.string.toast_googlemap_non_place_detail));
         }

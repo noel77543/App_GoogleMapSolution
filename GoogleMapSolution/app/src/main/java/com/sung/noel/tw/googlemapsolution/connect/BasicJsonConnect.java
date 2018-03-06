@@ -5,22 +5,21 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.loopj.android.http.AsyncHttpClient;
-
-import com.sung.noel.tw.googlemapsolution.util.LoadingCycleManager;
+import com.sung.noel.tw.googlemapsolution.util.LoadingImageCircleDialog;
 
 /**
  * Created by noel on 2017/11/2.
  */
 
 public class BasicJsonConnect {
-    protected LoadingCycleManager loadingCycleManager;
+    protected LoadingImageCircleDialog loadingImageCircleDialog;
     protected AsyncHttpClient client;
     private final int TIME_OUT = 15000;
     private Context context;
 
     public BasicJsonConnect(Context context) {
         this.context = context;
-        loadingCycleManager = new LoadingCycleManager(context);
+        loadingImageCircleDialog = new LoadingImageCircleDialog(context);
         client = new AsyncHttpClient();
         client.setMaxRetriesAndTimeout(2,TIME_OUT);
 

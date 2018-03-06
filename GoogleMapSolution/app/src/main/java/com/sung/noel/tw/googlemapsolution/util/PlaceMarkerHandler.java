@@ -24,7 +24,7 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     private GoogleMap googleMap;
     private MainActivity activity;
     private PlaceInfo placeInfo;
-    private LoadingCycleManager loadingCycleManager;
+    private LoadingImageCircleDialog loadingImageCircleDialog;
     private Map<String, Marker> placeMarkerMap;
     private Map<String, Integer> placeMarkerIndex;
 
@@ -39,9 +39,9 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loadingCycleManager = new LoadingCycleManager(activity);
-        loadingCycleManager.setLoadingMessage(activity.getString(R.string.dialog_message_googlemap_place_already));
-        loadingCycleManager.show();
+        loadingImageCircleDialog = new LoadingImageCircleDialog(activity);
+        loadingImageCircleDialog.setLoadingMessage(activity.getString(R.string.dialog_message_googlemap_place_already));
+        loadingImageCircleDialog.showLoadingDialog();
     }
 
     @Override
@@ -72,6 +72,6 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        loadingCycleManager.dismiss();
+        loadingImageCircleDialog.dismiss();
     }
 }

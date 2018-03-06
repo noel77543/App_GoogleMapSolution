@@ -44,9 +44,9 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow {
     /**
      * show
      */
-    public void showSightFoodDescribePopupWindow(PlaceInfo.ResultsBean resultBeans) {
+    public void showPopupWindow(PlaceInfo.ResultsBean resultBeans) {
         this.resultBeans = resultBeans;
-        initSightFoodDescribePopupWindow();
+        initPopupWindow();
         showAtLocation(mainActivity.drawerLayout, Gravity.CENTER, 0, 0);
     }
     //--------
@@ -54,7 +54,7 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow {
     /**
      * 初始化
      */
-    private void initSightFoodDescribePopupWindow() {
+    private void initPopupWindow() {
         LayoutInflater inflater = LayoutInflater.from(mainActivity);
         if (view == null) { //todo 同container觀念  _noel
             view = inflater.inflate(R.layout.popup_place_detail, null);
