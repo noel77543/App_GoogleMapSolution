@@ -59,10 +59,17 @@ dependencies {
     //PermissionsDispatcher
     compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
+
+    //Firebase Cloude Message
+    compile 'com.google.firebase:firebase-messaging:9.0.2'
+
+    //Google Tag Manager
+    compile 'com.google.android.gms:play-services-tagmanager:10.2.0'
 }
+apply plugin: 'com.google.gms.google-services'
 
 apt {
     arguments {
-        eventBusIndex "tw.com.creatidea.t_57_googlemap_solution.eventbus.MyEventBusIndex"
+        eventBusIndex "com.sung.noel.tw.googlemapsolution.eventbus.MyEventBusIndex"
     }
 }

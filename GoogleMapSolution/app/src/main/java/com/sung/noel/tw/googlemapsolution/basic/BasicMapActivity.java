@@ -21,13 +21,18 @@ import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sung.noel.tw.googlemapsolution.R;
+import com.sung.noel.tw.googlemapsolution.util.firebase.FirebaseEventCenter;
 
 /**
  * Created by noel on 2017/12/5.
  */
 
 public abstract class BasicMapActivity extends BasicLocationActivity implements OnMapReadyCallback {
+    private FirebaseEventCenter firebaseEventCenter;
+
     //判斷是否初次進來 需聚焦在目前位置
     public GoogleMap googleMap;
     public LatLng currentLatlng;
@@ -37,14 +42,21 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
     protected MapView mapview;
 
     @Override
-    public void onCreate( Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewId());
         ButterKnife.bind(this);
+        firebaseEventCenter = new FirebaseEventCenter(this);
+        firebaseEventCenter.sentEvent(FirebaseEventCenter.ACTION_START, this.getClass().getSimpleName());
         mapview.onCreate(savedInstanceState);
         mapview.onResume();
         mapview.getMapAsync(this);
     }
+    //-----------
+    /***
+     *    Firebase Analytics 事件發送
+     */
+
 
     //------------
 
@@ -173,19 +185,19 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
      * @param latLng
      * @param size
      */
-    public void goToTargetLocationByAnimate(LatLng latLng,float size){
+    public void goToTargetLocationByAnimate(LatLng latLng, float size) {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, size));
     }
     //-----------------------------
+
     /***
      * 無動畫前往
      * @param latLng
      * @param size
      */
-    public void goToTargetLocation(LatLng latLng,float size){
+    public void goToTargetLocation(LatLng latLng, float size) {
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, size));
     }
-
 
 
     //------------- todo 抽象方法

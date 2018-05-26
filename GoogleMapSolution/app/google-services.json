@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "697151096646",
+    "firebase_url": "https://mapsolution-50fef.firebaseio.com",
+    "project_id": "mapsolution-50fef",
+    "storage_bucket": "mapsolution-50fef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:697151096646:android:6bb2ff1ec14ee028",
+        "android_client_info": {
+          "package_name": "com.sung.noel.tw.googlemapsolution"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "697151096646-1eo9fck6c1uslihghu9hv8p1cosdl7h4.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "697151096646-1eo9fck6c1uslihghu9hv8p1cosdl7h4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHEo8fwixGnqVeB8Cyza9ZN1Oi6XsqR8o"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
