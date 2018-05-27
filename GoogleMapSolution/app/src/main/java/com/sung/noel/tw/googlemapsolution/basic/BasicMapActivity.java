@@ -22,16 +22,13 @@ import java.util.regex.Pattern;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.util.firebase.FirebaseEventCenter;
 
 /**
  * Created by noel on 2017/12/5.
  */
 
 public abstract class BasicMapActivity extends BasicLocationActivity implements OnMapReadyCallback {
-    private FirebaseEventCenter firebaseEventCenter;
 
     //判斷是否初次進來 需聚焦在目前位置
     public GoogleMap googleMap;
@@ -46,16 +43,11 @@ public abstract class BasicMapActivity extends BasicLocationActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(getContentViewId());
         ButterKnife.bind(this);
-        firebaseEventCenter = new FirebaseEventCenter(this);
-        firebaseEventCenter.sentEvent(FirebaseEventCenter.ACTION_START, this.getClass().getSimpleName());
+
         mapview.onCreate(savedInstanceState);
         mapview.onResume();
         mapview.getMapAsync(this);
     }
-    //-----------
-    /***
-     *    Firebase Analytics 事件發送
-     */
 
 
     //------------

@@ -87,6 +87,4 @@
     <string name="common_yes">是</string>
     <string name="common_no">否</string>
 
-    <!--firebase analytics-->
-    <string name="firebase_analytics_event">行為事件</string>
 </resources>

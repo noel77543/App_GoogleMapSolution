@@ -22,8 +22,8 @@ public class FirebaseEventCenter {
 
     @StringDef(ACTION_START)
     @Retention(RetentionPolicy.SOURCE)
-    public @interface FirebaseEvent{}
-
+    public @interface FirebaseEvent {
+    }
 
 
     private FirebaseAnalytics firebaseAnalytics;
@@ -32,8 +32,6 @@ public class FirebaseEventCenter {
     public FirebaseEventCenter(Context context) {
         this.context = context;
         initFirebase();
-
-
     }
     //----------------
 
@@ -44,11 +42,12 @@ public class FirebaseEventCenter {
         firebaseAnalytics = FirebaseAnalytics.getInstance(context);
     }
     //----------------
+
     /***
      *  發送事件
      */
     @JavascriptInterface
-    public void sentEvent(@FirebaseEvent String event,String viewName){
+    public void sentEvent(@FirebaseEvent String event, String viewName) {
         Bundle bundle = new Bundle();
         bundle.putString(context.getString(R.string.firebase_analytics_event), event);
         firebaseAnalytics.logEvent(viewName, bundle);

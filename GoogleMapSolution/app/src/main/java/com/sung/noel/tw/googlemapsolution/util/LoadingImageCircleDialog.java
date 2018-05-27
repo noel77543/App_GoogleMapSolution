@@ -41,11 +41,12 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
      *  init
      */
     private void init() {
-        this.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        setCancelable(false);
         linearInterpolator = new LinearInterpolator();
         setOnDismissListener(this);
     }
-
+    //--------------
     /***
      *  show
      */
@@ -59,6 +60,7 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
         animation.startNow();
         show();
     }
+    //--------------
 
     /***
      *  當dismiss 解除 動畫
@@ -70,6 +72,7 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
             animation.cancel();
         }
     }
+    //--------------
 
     /***
      *  設置文字

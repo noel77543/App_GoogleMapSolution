@@ -52,6 +52,7 @@ import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
 import com.sung.noel.tw.googlemapsolution.util.TargetChooseDialog;
+import com.sung.noel.tw.googlemapsolution.util.firebase.FirebaseEventCenter;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTION;
@@ -106,6 +107,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
 
     private PlaceDetailPopupWindow placeDetailPopupWindow;
+    private FirebaseEventCenter firebaseEventCenter;
 
     @Override
     protected int getContentViewId() {
@@ -114,6 +116,9 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
     @Override
     protected void init() {
+        firebaseEventCenter = new FirebaseEventCenter(this);
+        firebaseEventCenter.sentEvent(FirebaseEventCenter.ACTION_START, getClass().getSimpleName());
+
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
         targetChooseDialog = new TargetChooseDialog(this);
