@@ -6,6 +6,14 @@ package com.sung.noel.tw.googlemapsolution.connect;
 
 public class ConnectInfo {
 
+    /***
+     * google play
+     */
+    public static final String GOOGLE_PLAY = "https://play.google.com/store/apps/details?id=com.sung.noel.tw.googlemapsolution";
+
+
+    //-------
+
     //經緯度轉地址
     public static final String API_GOOGLE_GEOCODE = "https://maps.google.com/maps/api/geocode/json";
     //-------

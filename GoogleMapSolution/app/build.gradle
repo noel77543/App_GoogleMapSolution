@@ -53,7 +53,7 @@ dependencies {
     compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
     //Firebase Cloud Message
-    compile 'com.google.firebase:firebase-messaging:9.0.2'
+    compile 'com.google.firebase:firebase-messaging:10.2.0'
     //Firebase Crashlytics
     compile 'com.crashlytics.sdk.android:crashlytics:2.9.3'
 

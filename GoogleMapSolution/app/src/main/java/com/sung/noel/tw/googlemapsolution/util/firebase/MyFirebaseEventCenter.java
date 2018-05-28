@@ -16,7 +16,7 @@ import java.lang.annotation.RetentionPolicy;
  * Created by noel on 2018/5/26.
  */
 
-public class FirebaseEventCenter {
+public class MyFirebaseEventCenter {
 
     public static final String ACTION_START = "開始使用";
 
@@ -29,7 +29,7 @@ public class FirebaseEventCenter {
     private FirebaseAnalytics firebaseAnalytics;
     private Context context;
 
-    public FirebaseEventCenter(Context context) {
+    public MyFirebaseEventCenter(Context context) {
         this.context = context;
         initFirebase();
     }

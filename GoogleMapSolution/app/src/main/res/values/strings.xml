@@ -47,6 +47,11 @@
     <string name="place_item_post_office_en">post_office</string>
     <string name="place_item_police_en">police</string>
 
+    <!--distance-->
+    <string name="distance_meter">%d公尺</string>
+    <string name="distance_time">%d分鐘</string>
+
+
     <!--others-->
     <string name="dialog_choose">選擇</string>
     <string name="dialog_message_googlemap_getaddress">取得地址資訊...</string>

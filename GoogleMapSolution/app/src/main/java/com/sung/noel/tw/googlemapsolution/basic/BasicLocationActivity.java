@@ -149,12 +149,14 @@ public abstract class BasicLocationActivity extends FragmentActivity implements
      */
     private void configLocationRequest() {
         locationRequest = new LocationRequest();
-        // 設定讀取位置資訊的間隔時間為一秒（1000ms）
-        locationRequest.setInterval(1000);
-        // 設定讀取位置資訊最快的間隔時間為一秒（1000ms）
-        locationRequest.setFastestInterval(1000);
-        // 設定優先讀取高精確度的位置資訊（GPS）
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationRequest
+                // 設定讀取位置資訊的間隔時間為一秒（1000ms）
+                .setInterval(1000)
+                // 設定讀取位置資訊最快的間隔時間為一秒（1000ms）
+                .setFastestInterval(1000)
+                // 設定優先讀取高精確度的位置資訊（GPS）
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
     //-------------
 

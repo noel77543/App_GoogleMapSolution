@@ -52,7 +52,7 @@ import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
 import com.sung.noel.tw.googlemapsolution.util.TargetChooseDialog;
-import com.sung.noel.tw.googlemapsolution.util.firebase.FirebaseEventCenter;
+import com.sung.noel.tw.googlemapsolution.util.firebase.MyFirebaseEventCenter;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTION;
@@ -65,7 +65,6 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
  */
 
 public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
-    private Snackbar snackBar;
     private Map<String, Marker> placeMarkerMap = new HashMap<>();
     private Map<String, Integer> placeMarkerIndex = new HashMap<>();
     private MyInfoAdapter adapter;
@@ -107,7 +106,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
 
     private PlaceDetailPopupWindow placeDetailPopupWindow;
-    private FirebaseEventCenter firebaseEventCenter;
+    private MyFirebaseEventCenter myFirebaseEventCenter;
 
     @Override
     protected int getContentViewId() {
@@ -116,8 +115,8 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
     @Override
     protected void init() {
-        firebaseEventCenter = new FirebaseEventCenter(this);
-        firebaseEventCenter.sentEvent(FirebaseEventCenter.ACTION_START, getClass().getSimpleName());
+        myFirebaseEventCenter = new MyFirebaseEventCenter(this);
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.ACTION_START, getClass().getSimpleName());
 
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
@@ -128,20 +127,9 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
-        initSnackbar();
         initGooglemapUtils();
     }
-    //----------
 
-    /***
-     * Snackbar 初始化
-     */
-    private void initSnackbar() {
-        snackBar = Snackbar
-                .make(coordinatorLayout, "", Snackbar.LENGTH_INDEFINITE)
-                .setActionTextColor(getResources().getColor(R.color.white))
-                .setAction(getString(R.string.snackbar_distance_googlemap_action), this);
-    }
 
     //----------
 
@@ -208,10 +196,9 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             //error message
         } else if ((int) data.get("type") == TYPE_DISTANCE) {
             DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
-            String distance = (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10) + "公尺";
-            String time = (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) + "分";
-            snackBar.setText(String.format(getString(R.string.snackbar_distance_googlemap), distance, time));
-            snackBar.show();
+            String distance = String.format(getString(R.string.distance_meter),(distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10)) ;
+            String time = String.format(getString(R.string.distance_time),(distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) );
+            displaySnackbar( distance, time);
         } else {
             String errString = (String) data.get("data");
             Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
@@ -220,6 +207,17 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 btnSearch.setVisibility(View.INVISIBLE);
             }
         }
+    }
+
+    //----------------------------
+    /***
+     *  display snackbar
+     */
+    private void displaySnackbar(String distance,String time){
+        Snackbar.make(coordinatorLayout,String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_INDEFINITE)
+                .setActionTextColor(getResources().getColor(android.R.color.white))
+                .setAction(getString(R.string.snackbar_distance_googlemap_action), this)
+                .show();
     }
 
     //-----------------------------
