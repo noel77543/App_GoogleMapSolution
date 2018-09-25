@@ -5,7 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.sung.noel.tw.googlemapsolution.util.LoadingImageCircleDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
 
 /**
  * Created by noel on 2017/11/2.

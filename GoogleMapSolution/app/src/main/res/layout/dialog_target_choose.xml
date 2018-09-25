@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:alpha="0.8"
-    android:background="@color/white"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <TextView
@@ -29,6 +29,6 @@
         android:layout_gravity="end"
         android:background="@android:color/transparent"
         android:text="@string/dialog_choose"
-        android:textColor="@color/black" />
+        android:textColor="@android:color/black" />
 
 </LinearLayout>

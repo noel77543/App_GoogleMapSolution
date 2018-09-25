@@ -7,10 +7,11 @@
     android:orientation="vertical">
 
     <ImageView
+        android:contentDescription="@string/app_name"
         android:id="@+id/imageView"
-        android:src="@drawable/loading_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:src="@drawable/shape_loading_dialog_bg"
+        android:layout_width="40dp"
+        android:layout_height="40dp" />
 
     <TextView
         android:layout_marginLeft="5dp"

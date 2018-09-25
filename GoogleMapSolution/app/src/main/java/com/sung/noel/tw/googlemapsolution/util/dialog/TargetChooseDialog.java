@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.util;
+package com.sung.noel.tw.googlemapsolution.util.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -33,21 +33,13 @@ public class TargetChooseDialog extends Dialog {
     @BindView(R.id.number_picker)
     NumberPicker numberPicker;
 
-    private Context context;
-    private View view;
-    private LayoutInflater inflater;
     private OnAcceptClickListener acceptClickListener;
     //-----------------------------------------------
 
     public TargetChooseDialog(Context context) {
         super(context);
-        this.context = context;
-        inflater = LayoutInflater.from(context);
-        if (view == null) {
-            view = inflater.inflate(R.layout.dialog_target_choose, null);
-        }
-        setContentView(view);
-        ButterKnife.bind(this, view);
+        setContentView(R.layout.dialog_target_choose);
+        ButterKnife.bind(this);
         initStationPicker();
         setDialogGravity();
     }

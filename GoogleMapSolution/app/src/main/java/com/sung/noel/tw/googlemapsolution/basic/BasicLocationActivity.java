@@ -28,7 +28,7 @@ import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.util.LoadingImageCircleDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
 
 /**
  * Created by noel on 2017/12/5.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="firebase_analytics_class">Class名稱</string>
     <string name="firebase_analytics_event">行為事件</string>
-    <string name="firebase_analytics_exception">%s閃退報告</string>
 
 </resources>

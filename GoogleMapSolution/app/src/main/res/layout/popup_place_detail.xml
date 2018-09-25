@@ -16,7 +16,7 @@
         android:gravity="center"
         android:paddingBottom="15dp"
         android:paddingTop="15dp"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         tools:text="桃園國際機場" />
 
@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         tools:text="aaa" />
 
     <TextView
@@ -44,6 +44,6 @@
         android:layout_gravity="center"
         android:ellipsize="end"
         android:maxLines="1"
-        android:textColor="@color/white" />
+        android:textColor="@android:color/white" />
 
 </LinearLayout>

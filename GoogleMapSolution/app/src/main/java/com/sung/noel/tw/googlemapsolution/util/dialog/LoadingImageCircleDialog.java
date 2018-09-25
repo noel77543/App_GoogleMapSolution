@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.util;
+package com.sung.noel.tw.googlemapsolution.util.dialog;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -17,7 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by User on 2017/11/4.
+ * Created by noel on 2017/11/4.
  */
 
 public class LoadingImageCircleDialog extends Dialog implements DialogInterface.OnDismissListener{
@@ -36,6 +36,7 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
         ButterKnife.bind(this);
         init();
     }
+    //--------------
 
     /***
      *  init

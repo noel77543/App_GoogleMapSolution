@@ -32,11 +32,11 @@ public class NavigationDrawer implements AdapterView.OnItemClickListener {
         activity = (MainActivity) context;
         drawerLayout = activity.drawerLayout;
         listView = activity.listview;
-        initDrawaerListview();
+        initDrawerListview();
     }
 
     //-----
-    private void initDrawaerListview() {
+    private void initDrawerListview() {
         adapter = new NavigationAdapter(activity);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);

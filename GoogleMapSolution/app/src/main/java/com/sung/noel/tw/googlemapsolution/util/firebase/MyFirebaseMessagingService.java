@@ -1,6 +1,5 @@
 package com.sung.noel.tw.googlemapsolution.util.firebase;
 
-import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
@@ -27,8 +26,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
+
         Map<String, String> data = remoteMessage.getData();
-        new CustomNotification(this,null).sendNotificationToUpdate(R.mipmap.ic_launcher,R.mipmap.ic_launcher_round,data.get(KEY_TITLE),data.get(KEY_CONTENT), ConnectInfo.GOOGLE_PLAY);
+
+        new CustomNotification(this, CustomNotification.CHANNEL_ID_NORMAL, CustomNotification.CHANNEL_NAME_NORMAL, null).
+                sendNotification(CustomNotification.NOTIFICATION_ID_NORMAL, data.get(KEY_TITLE), data.get(KEY_CONTENT));
+
 
     }
+
+    //-------------
+
 }

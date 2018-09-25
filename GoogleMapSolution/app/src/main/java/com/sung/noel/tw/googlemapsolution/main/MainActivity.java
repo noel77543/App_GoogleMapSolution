@@ -38,6 +38,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.basic.BasicMapActivity;
 import com.sung.noel.tw.googlemapsolution.connect.GoogleConnect;
@@ -51,7 +52,7 @@ import com.sung.noel.tw.googlemapsolution.navigation.NavigationDrawer;
 import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
-import com.sung.noel.tw.googlemapsolution.util.TargetChooseDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.TargetChooseDialog;
 import com.sung.noel.tw.googlemapsolution.util.firebase.MyFirebaseEventCenter;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
@@ -65,6 +66,12 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
  */
 
 public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
+
+    private final float MAP_SIZE_SMALL = 12.0f;
+    private final float MAP_SIZE_NORMAL = 15.5f;
+    private final float MAP_SIZE_LARGE = 20.0f;
+
+
     private Map<String, Marker> placeMarkerMap = new HashMap<>();
     private Map<String, Integer> placeMarkerIndex = new HashMap<>();
     private MyInfoAdapter adapter;
@@ -116,7 +123,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     @Override
     protected void init() {
         myFirebaseEventCenter = new MyFirebaseEventCenter(this);
-        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.ACTION_START, getClass().getSimpleName());
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_START);
 
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
@@ -175,7 +182,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         } else if ((int) data.get("type") == TYPE_LOCATION) {
             latLngTarget = (LatLng) data.get("data");
             addTargetMarkerOnMap((LatLng) data.get("data"), edit.getText().toString());
-            goToTargetLocationByAnimate(latLngTarget, 12.0f);
+            goToTargetLocationByAnimate(latLngTarget, MAP_SIZE_LARGE);
 
             //途經點查詢 路線規劃
         } else if ((int) data.get("type") == TYPE_DIRECTION) {
@@ -189,16 +196,16 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         } else if ((int) data.get("type") == TYPE_PLACE) {
             btnSearch.setVisibility(View.VISIBLE);
             placeInfo = (PlaceInfo) data.get("data");
-            goToTargetLocationByAnimate(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), 16.0f);
+            goToTargetLocationByAnimate(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), MAP_SIZE_NORMAL);
             targetChooseDialog.setStationData(placeInfo);
             new PlaceMarkerHandler(this, googleMap, placeInfo, placeMarkerMap, placeMarkerIndex).execute();
 
             //error message
         } else if ((int) data.get("type") == TYPE_DISTANCE) {
             DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
-            String distance = String.format(getString(R.string.distance_meter),(distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10)) ;
-            String time = String.format(getString(R.string.distance_time),(distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60) );
-            displaySnackbar( distance, time);
+            String distance = String.format(getString(R.string.distance_meter), (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10));
+            String time = String.format(getString(R.string.distance_time), (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60));
+            displaySnackbar(distance, time);
         } else {
             String errString = (String) data.get("data");
             Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
@@ -210,11 +217,12 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     }
 
     //----------------------------
+
     /***
      *  display snackbar
      */
-    private void displaySnackbar(String distance,String time){
-        Snackbar.make(coordinatorLayout,String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_INDEFINITE)
+    private void displaySnackbar(String distance, String time) {
+        Snackbar.make(coordinatorLayout, String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_INDEFINITE)
                 .setActionTextColor(getResources().getColor(android.R.color.white))
                 .setAction(getString(R.string.snackbar_distance_googlemap_action), this)
                 .show();
@@ -278,27 +286,36 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
             polyline.remove();
         }
 
+        //拔除marker
         if (markerTarget != null && isInfoWindowShown) {
             markerTarget.hideInfoWindow();
             markerTarget.remove();
             isInfoWindowShown = false;
-        } else if (!isInfoWindowShown) {
 
+            myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_MARKER_REMOVE);
+        }
+        //插上marker
+        else if (!isInfoWindowShown) {
             latLngTarget = latLng;
             connect.connectToGetAddress(latLngTarget.latitude, latLngTarget.longitude);
             isInfoWindowShown = true;
+
+            myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_MARKER_PUT);
         }
     }
 
 
     //----------
 
-
+    /***
+     * 當點擊Info Window
+     * @param marker
+     */
     @Override
     public void onInfoWindowClick(final Marker marker) {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setMessage(MessageFormat.format(getString(R.string.toast_route), marker.getTitle()));
-        dialog.setPositiveButton(getString(R.string.permission_goahead), new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(getString(R.string.dialog_go), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 destinationMarker = marker;
@@ -308,6 +325,8 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 String endLng = marker.getPosition().longitude + "";
                 connect.connectToGetDirection(startLat, startLng, endLat, endLng);
                 markerTitle = marker.getTitle();
+                goToTargetLocationByAnimate(currentLatlng,MAP_SIZE_NORMAL);
+                myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_DIRECTION);
             }
         });
         dialog.show();
@@ -328,11 +347,12 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         NavigationData navigation = (NavigationData) parent.getAdapter().getItem(position);
         targetChooseDialog.setTitleType(navigation.getTextCh());
         connect.connectToGetPlace(getUserLocation().getLatitude() + "", getUserLocation().getLongitude() + "", navigation.getTextEn());
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, String.format(MyFirebaseEventCenter.ACTION_MAIN_MAP_PLACE, navigation.getTextCh()));
     }
     //----------
 
     /***
-     * 當選擇place名稱後
+     * 當右下角放大鏡的dialog 選擇了目標place名稱時
      * @param index
      */
     @Override
@@ -340,18 +360,21 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         isInfoWindowShown = true;
         Marker marker = placeMarkerMap.get(placeInfo.getResults().get(index).getName());
         marker.showInfoWindow();
-        goToTargetLocationByAnimate(marker.getPosition(), 20.0f);
+        goToTargetLocationByAnimate(marker.getPosition(), MAP_SIZE_LARGE);
     }
 
     //--------
 
-    // 進行 地址搜尋
+    /***
+     * 進行 地址搜尋
+     */
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP) {
             String searchAddress = edit.getText().toString();
             if (searchAddress.length() > 0) {
                 connect.connectToGetLocation(searchAddress);
+                myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_ADDRESS);
             } else {
                 Toast.makeText(this, getString(R.string.toast_enteraddress), Toast.LENGTH_SHORT).show();
             }
@@ -367,7 +390,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_focus:
-                goToTargetLocation(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), 16.0f);
+                goToTargetLocation(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), MAP_SIZE_SMALL);
                 break;
 
             case R.id.btn_reload:
@@ -389,12 +412,14 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
      */
     @Override
     public void onClick(View v) {
+
         if (placeMarkerIndex.get(markerTitle) != null) {
             PlaceInfo.ResultsBean resultBeans = placeInfo.getResults().get(placeMarkerIndex.get(markerTitle));
             placeDetailPopupWindow.showPopupWindow(resultBeans);
         } else {
             EventCenter.getInstance().sendConnectErrorEvent(getString(R.string.toast_googlemap_non_place_detail));
         }
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_PLACE_DETAIL);
     }
     //-----------------------------
 

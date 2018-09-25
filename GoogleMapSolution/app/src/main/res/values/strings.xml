@@ -19,7 +19,6 @@
 
     <!--dialog-->
     <string name="permission_gotocheck">前往設定權限？</string>
-    <string name="permission_goahead">前往</string>
     <string name="toast_net_cant_work">請確認網路訊號狀況後，再試一次。</string>
 
     <!--navigation-->
@@ -77,10 +76,16 @@
 
     <string name="toast_googlemap_non_place">鄰近地區不存在所選項目。</string>
     <string name="text_googlemap_non_address">目標不具備地址資訊。</string>
-    <string name="snackbar_distance_googlemap">距離：%1$s  需時：%2$s</string>
+    <string name="snackbar_distance_googlemap">距離：%1$s  車程：%2$s</string>
     <string name="snackbar_distance_googlemap_action">詳細資訊 ➢</string>
     <string name="place_detail_status_is_working">營業中</string>
     <string name="place_detail_status_not_working">休息</string>
+
+    <!--notification-->
+    <string name="notification_message">距離監測中...</string>
+    <string name="notification_finish">結束</string>
+    <string name="notification_display">查看</string>
+
 
     <!--AR-->
     <string name="ar_message_camera">是否同意開啟相機權限,以便執行AR導引功能。</string>
