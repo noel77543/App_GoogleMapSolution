@@ -14,8 +14,12 @@ public class ConnectInfo {
 
     //-------
 
-    //經緯度轉地址
+//    經緯度轉地址
     public static final String API_GOOGLE_GEOCODE = "https://maps.google.com/maps/api/geocode/json";
+    //經緯度轉地址
+    public static final String T_API_GOOGLE_GEOCODE = "https://maps.google.com/maps/api/geocode/json?latlng={0}&language={1}";
+
+
     //-------
     //路線
     /**
@@ -30,6 +34,8 @@ public class ConnectInfo {
      * key 你的googleAPI key
      */
     public static final String API_GOOGLE_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json";
+    public static final String T_API_GOOGLE_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json?origin={0}&destination={1}&mode={2}&key={3}&language={4}";
+
     //-------
 
     /***
@@ -37,6 +43,7 @@ public class ConnectInfo {
      * 距離,耗時
      */
     public static final String API_GOOGLE_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json";
+    public static final String T_API_GOOGLE_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&language={2}&key={3}";
 
     //------todo 以下api接與API_GOOGLE_PLACE相關------
     /**
@@ -45,6 +52,8 @@ public class ConnectInfo {
      * 地方資訊
      */
     public static final String API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+    public static final String T_API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&radius={1}&types={2}&language={3}&key={4}";
+
     /***
      * 從API_GOOGLE_PLACE取得place_id後串接 這隻api取得該地點的詳細資訊
      * ?placeid=ChIJg6bY6eirQjQRfXUA56FEqJU

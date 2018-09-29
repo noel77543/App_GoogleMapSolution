@@ -41,7 +41,7 @@ import butterknife.OnClick;
 
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.basic.BasicMapActivity;
-import com.sung.noel.tw.googlemapsolution.connect.GoogleConnect;
+import com.sung.noel.tw.googlemapsolution.connect.newconnect.TGoogleConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.adapter.MyInfoAdapter;
 import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
@@ -52,7 +52,6 @@ import com.sung.noel.tw.googlemapsolution.navigation.NavigationDrawer;
 import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
-import com.sung.noel.tw.googlemapsolution.util.dialog.TargetChooseDialog;
 import com.sung.noel.tw.googlemapsolution.util.firebase.MyFirebaseEventCenter;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
@@ -65,7 +64,7 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, TargetChooseDialog.OnAcceptClickListener {
+public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener {
 
     private final float MAP_SIZE_SMALL = 12.0f;
     private final float MAP_SIZE_NORMAL = 15.5f;
@@ -80,14 +79,13 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     private Marker markerTarget;
     private MarkerOptions optionsTarget = new MarkerOptions();
 
-    private GoogleConnect connect;
+    private TGoogleConnect connect;
     //用來控制infowindow 開啟或關閉
     private boolean isInfoWindowShown = false;
     //路線規劃
     private Polyline polyline;
     //drawer
     private NavigationDrawer navigationDrawer;
-    private TargetChooseDialog targetChooseDialog;
     private PlaceInfo placeInfo;
     //劃線用 終點marker
     private Marker destinationMarker;
@@ -104,8 +102,6 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     Button btnReload;
     @BindView(R.id.imageview)
     ImageView imageview;
-    @BindView(R.id.btn_search)
-    Button btnSearch;
     @BindView(R.id.listview)
     public ListView listview;
     @BindView(R.id.drawer_layout)
@@ -127,12 +123,10 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
-        targetChooseDialog = new TargetChooseDialog(this);
-        targetChooseDialog.setOnAcceptClickListener(this);
         navigationDrawer = new NavigationDrawer(this);
         navigationDrawer.setOnNavigationItemClickListener(this);
         adapter = new MyInfoAdapter(this);
-        connect = new GoogleConnect(this);
+        connect = new TGoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
         initGooglemapUtils();
     }
@@ -172,48 +166,51 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     //----------
     //EventBus
     @Subscribe
-    public void onSuccessConnect(Map<String, Object> data) {
-        //經緯度轉地址
-        if ((int) data.get("type") == TYPE_ADDRESS) {
-            AddressInfo addressInfo = (AddressInfo) data.get("data");
-            addTargetMarkerOnMap(latLngTarget, getAddressFormat(addressInfo.getResults()));
+    public void onSuccessConnect(final Map<String, Object> data) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //經緯度轉地址
+                if ((int) data.get("type") == TYPE_ADDRESS) {
+                    AddressInfo addressInfo = (AddressInfo) data.get("data");
+                    addTargetMarkerOnMap(latLngTarget, getAddressFormat(addressInfo.getResults()));
 
-            //輸入查詢 地址轉經緯度
-        } else if ((int) data.get("type") == TYPE_LOCATION) {
-            latLngTarget = (LatLng) data.get("data");
-            addTargetMarkerOnMap((LatLng) data.get("data"), edit.getText().toString());
-            goToTargetLocationByAnimate(latLngTarget, MAP_SIZE_LARGE);
+                    //輸入查詢 地址轉經緯度
+                } else if ((int) data.get("type") == TYPE_LOCATION) {
+                    latLngTarget = (LatLng) data.get("data");
+                    addTargetMarkerOnMap((LatLng) data.get("data"), edit.getText().toString());
+                    goToTargetLocationByAnimate(latLngTarget, MAP_SIZE_LARGE);
 
-            //途經點查詢 路線規劃
-        } else if ((int) data.get("type") == TYPE_DIRECTION) {
-            DirectionInfo directionInfo = (DirectionInfo) data.get("data");
-            addPolyLineOnMap(directionInfo);
-            double targetLat = markerTarget == null ? destinationMarker.getPosition().latitude : markerTarget.getPosition().latitude;
-            double targetLng = markerTarget == null ? destinationMarker.getPosition().longitude : markerTarget.getPosition().longitude;
-            connect.connectToGetDistance(getUserLocation().getLatitude(), getUserLocation().getLongitude(), targetLat, targetLng);
+                    //途經點查詢 路線規劃
+                } else if ((int) data.get("type") == TYPE_DIRECTION) {
+                    DirectionInfo directionInfo = (DirectionInfo) data.get("data");
+                    addPolyLineOnMap(directionInfo);
+                    double targetLat = markerTarget == null ? destinationMarker.getPosition().latitude : markerTarget.getPosition().latitude;
+                    double targetLng = markerTarget == null ? destinationMarker.getPosition().longitude : markerTarget.getPosition().longitude;
+                    connect.connectToGetDistance(getUserLocation().getLatitude(), getUserLocation().getLongitude(), targetLat, targetLng);
 
-            //地方資訊
-        } else if ((int) data.get("type") == TYPE_PLACE) {
-            btnSearch.setVisibility(View.VISIBLE);
-            placeInfo = (PlaceInfo) data.get("data");
-            goToTargetLocationByAnimate(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), MAP_SIZE_NORMAL);
-            targetChooseDialog.setStationData(placeInfo);
-            new PlaceMarkerHandler(this, googleMap, placeInfo, placeMarkerMap, placeMarkerIndex).execute();
+                    //地方資訊
+                } else if ((int) data.get("type") == TYPE_PLACE) {
+                    placeInfo = (PlaceInfo) data.get("data");
+                    goToTargetLocationByAnimate(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), MAP_SIZE_NORMAL);
+                    new PlaceMarkerHandler(MainActivity.this, googleMap, placeInfo, placeMarkerMap, placeMarkerIndex).execute();
 
-            //error message
-        } else if ((int) data.get("type") == TYPE_DISTANCE) {
-            DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
-            String distance = String.format(getString(R.string.distance_meter), (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10));
-            String time = String.format(getString(R.string.distance_time), (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60));
-            displaySnackbar(distance, time);
-        } else {
-            String errString = (String) data.get("data");
-            Toast.makeText(this, errString, Toast.LENGTH_SHORT).show();
-            if (errString.equals(getString(R.string.toast_googlemap_non_place))) {
-                placeMarkerMap.clear();
-                btnSearch.setVisibility(View.INVISIBLE);
+                    //error message
+                } else if ((int) data.get("type") == TYPE_DISTANCE) {
+                    DistanceInfo distanceInfo = (DistanceInfo) data.get("data");
+                    String distance = String.format(getString(R.string.distance_meter), (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10));
+                    String time = String.format(getString(R.string.distance_time), (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60));
+                    displaySnackbar(distance, time);
+                } else {
+                    String errString = (String) data.get("data");
+                    Toast.makeText(MainActivity.this, errString, Toast.LENGTH_SHORT).show();
+                    if (errString.equals(getString(R.string.toast_googlemap_non_place))) {
+                        placeMarkerMap.clear();
+                    }
+                }
             }
-        }
+        });
+
     }
 
     //----------------------------
@@ -325,7 +322,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 String endLng = marker.getPosition().longitude + "";
                 connect.connectToGetDirection(startLat, startLng, endLat, endLng);
                 markerTitle = marker.getTitle();
-                goToTargetLocationByAnimate(currentLatlng,MAP_SIZE_NORMAL);
+                goToTargetLocationByAnimate(currentLatlng, MAP_SIZE_NORMAL);
                 myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_DIRECTION);
             }
         });
@@ -345,22 +342,8 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     public void onNavigationItemClick(AdapterView<?> parent, View view, int position, long id) {
         googleMap.clear();
         NavigationData navigation = (NavigationData) parent.getAdapter().getItem(position);
-        targetChooseDialog.setTitleType(navigation.getTextCh());
         connect.connectToGetPlace(getUserLocation().getLatitude() + "", getUserLocation().getLongitude() + "", navigation.getTextEn());
         myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, String.format(MyFirebaseEventCenter.ACTION_MAIN_MAP_PLACE, navigation.getTextCh()));
-    }
-    //----------
-
-    /***
-     * 當右下角放大鏡的dialog 選擇了目標place名稱時
-     * @param index
-     */
-    @Override
-    public void OnAcceptClick(int index) {
-        isInfoWindowShown = true;
-        Marker marker = placeMarkerMap.get(placeInfo.getResults().get(index).getName());
-        marker.showInfoWindow();
-        goToTargetLocationByAnimate(marker.getPosition(), MAP_SIZE_LARGE);
     }
 
     //--------
@@ -386,7 +369,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
 
     //----------
-    @OnClick({R.id.btn_focus, R.id.btn_reload, R.id.btn_search})
+    @OnClick({R.id.btn_focus, R.id.btn_reload})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_focus:
@@ -395,12 +378,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
 
             case R.id.btn_reload:
                 googleMap.clear();
-                btnSearch.setVisibility(View.INVISIBLE);
                 getLocationPermissionsWithCheck();
-                break;
-
-            case R.id.btn_search:
-                targetChooseDialog.show();
                 break;
         }
     }

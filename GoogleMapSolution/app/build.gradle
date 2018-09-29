@@ -56,8 +56,10 @@ dependencies {
     compile 'com.google.firebase:firebase-messaging:10.2.0'
     //Firebase Crashlytics
     compile 'com.crashlytics.sdk.android:crashlytics:2.9.3'
-//    //Firebase Crashlytics
-//    compile 'com.google.firebase:firebase-core:16.0.3'
+    //Firebase Analytics
+    compile 'com.google.firebase:firebase-core:10.2.0'
+    //okHttp
+    compile 'com.squareup.okhttp3:okhttp:3.11.0'
 }
 apply plugin: 'com.google.gms.google-services'
 
