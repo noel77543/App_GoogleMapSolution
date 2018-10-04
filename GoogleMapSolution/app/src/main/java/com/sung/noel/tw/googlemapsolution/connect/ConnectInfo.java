@@ -1,5 +1,7 @@
 package com.sung.noel.tw.googlemapsolution.connect;
 
+import android.support.annotation.StringDef;
+
 /**
  * Created by noel on 2017/8/17.
  */
@@ -13,11 +15,13 @@ public class ConnectInfo {
 
 
     //-------
+    private final static String DOMAIN_GOOGLE_MAP = "https://maps.google.com/maps/api/";
 
-//    經緯度轉地址
-    public static final String API_GOOGLE_GEOCODE = "https://maps.google.com/maps/api/geocode/json";
+
+    //-------
+
     //經緯度轉地址
-    public static final String T_API_GOOGLE_GEOCODE = "https://maps.google.com/maps/api/geocode/json?latlng={0}&language={1}";
+    public static final String API_GOOGLE_GEOCODE = "geocode/json?latlng={0}&language={1}";
 
 
     //-------
@@ -33,8 +37,7 @@ public class ConnectInfo {
      * }
      * key 你的googleAPI key
      */
-    public static final String API_GOOGLE_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json";
-    public static final String T_API_GOOGLE_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json?origin={0}&destination={1}&mode={2}&key={3}&language={4}";
+    public static final String API_GOOGLE_DIRECTION = DOMAIN_GOOGLE_MAP + "directions/json?origin={0}&destination={1}&mode={2}&key={3}&language={4}";
 
     //-------
 
@@ -42,8 +45,7 @@ public class ConnectInfo {
      * origins=25.0519432,121.5496224&destinations=25.0511223,121.5505239&key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg
      * 距離,耗時
      */
-    public static final String API_GOOGLE_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json";
-    public static final String T_API_GOOGLE_MATRIX = "https://maps.googleapis.com/maps/api/distancematrix/json?origins={0}&destinations={1}&language={2}&key={3}";
+    public static final String API_GOOGLE_MATRIX = DOMAIN_GOOGLE_MAP + "distancematrix/json?origins={0}&destinations={1}&language={2}&key={3}";
 
     //------todo 以下api接與API_GOOGLE_PLACE相關------
     /**
@@ -51,15 +53,14 @@ public class ConnectInfo {
      * 參數：location=座標&radius=搜尋範圍&types=種類&sensor=true&key=server api key
      * 地方資訊
      */
-    public static final String API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
-    public static final String T_API_GOOGLE_PLACE = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location={0}&radius={1}&types={2}&language={3}&key={4}";
+    public static final String API_GOOGLE_PLACE = DOMAIN_GOOGLE_MAP + "place/nearbysearch/json?location={0}&radius={1}&types={2}&language={3}&key={4}";
 
     /***
      * 從API_GOOGLE_PLACE取得place_id後串接 這隻api取得該地點的詳細資訊
      * ?placeid=ChIJg6bY6eirQjQRfXUA56FEqJU
      * &key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg
      */
-    public static final String API_GOOGLE_PLACE_DETAIL = "https://maps.googleapis.com/maps/api/place/details/json";
+    public static final String API_GOOGLE_PLACE_DETAIL = DOMAIN_GOOGLE_MAP + "place/details/json";
     /***
      * 從API_GOOGLE_PLACE取得photo_reference後串接 這隻api取得該地點的照片
      * ?photoreference=CmRaAAAAM0uyvNyS-c6qkMwvaAn_vibeefraIr5tC6stwyR9AJc8StSOiy_VOZQaDuED1Gps_CPNJal3B2HsrL8IQf7NTurEUWaOsBexSgDldpF_57HIDUP_udGB45MmVxKBnEH0EhDULdzmDg_6d12L4fiMrziwGhRlDD-RYhTlHvJ-qoZ6XNotVq8eOg
@@ -67,5 +68,13 @@ public class ConnectInfo {
      * &maxwidth=200
      * &key=AIzaSyBEZQZ_LbypO2dSxd3KG4PfGm5HFjq9pHg
      */
-    public static final String API_GOOGLE_PHOTO_REFERENCE = "https://maps.googleapis.com/maps/api/place/photo?photoreference=%1$s&maxheight=300&maxwidth=550&key=%2$s";
+    public static final String API_GOOGLE_PHOTO_REFERENCE = DOMAIN_GOOGLE_MAP + "place/photo?photoreference={0}&maxheight=300&maxwidth=550&key={1}";
+
+
+    //-------------------
+    //todo 以下與天氣相關
+    /***
+     * 取得所有縣市地區的索引值
+     */
+    public static final String API_WEATHER_ALL_AREA = "https://works.ioa.tw/weather/api/all.json";
 }

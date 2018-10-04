@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.basic;
+package com.sung.noel.tw.googlemapsolution.base;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -35,7 +35,7 @@ import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
  */
 
 @RuntimePermissions
-public abstract class BasicLocationActivity extends FragmentActivity implements
+public abstract class BaseLocationActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener {
@@ -73,7 +73,7 @@ public abstract class BasicLocationActivity extends FragmentActivity implements
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        BasicLocationActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
+        BaseLocationActivityPermissionsDispatcher.onRequestPermissionsResult(this, requestCode, grantResults);
     }
     //-------------
 
@@ -84,7 +84,7 @@ public abstract class BasicLocationActivity extends FragmentActivity implements
         loadingImageCircleDialog = new LoadingImageCircleDialog(this);
         loadingImageCircleDialog.setLoadingMessage(this.getString(R.string.dialog_message_googlemap_location));
         loadingImageCircleDialog.showLoadingDialog();
-        BasicLocationActivityPermissionsDispatcher.AllowedGetMyLocationWithCheck(this);
+        BaseLocationActivityPermissionsDispatcher.AllowedGetMyLocationWithCheck(this);
     }
 
     //-----------------------------

@@ -1,10 +1,11 @@
-package com.sung.noel.tw.googlemapsolution.connect.newconnect;
+package com.sung.noel.tw.googlemapsolution.base;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.google.gson.Gson;
+import com.sung.noel.tw.googlemapsolution.BuildConfig;
 import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
 
 import java.io.Reader;

@@ -40,8 +40,8 @@ import butterknife.BindView;
 import butterknife.OnClick;
 
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.basic.BasicMapActivity;
-import com.sung.noel.tw.googlemapsolution.connect.newconnect.TGoogleConnect;
+import com.sung.noel.tw.googlemapsolution.base.BaseMapActivity;
+import com.sung.noel.tw.googlemapsolution.connect.GoogleConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.adapter.MyInfoAdapter;
 import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
@@ -64,7 +64,7 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener {
+public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener {
 
     private final float MAP_SIZE_SMALL = 12.0f;
     private final float MAP_SIZE_NORMAL = 15.5f;
@@ -79,7 +79,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     private Marker markerTarget;
     private MarkerOptions optionsTarget = new MarkerOptions();
 
-    private TGoogleConnect connect;
+    private GoogleConnect connect;
     //用來控制infowindow 開啟或關閉
     private boolean isInfoWindowShown = false;
     //路線規劃
@@ -126,9 +126,9 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
         navigationDrawer = new NavigationDrawer(this);
         navigationDrawer.setOnNavigationItemClickListener(this);
         adapter = new MyInfoAdapter(this);
-        connect = new TGoogleConnect(this);
+        connect = new GoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
-        initGooglemapUtils();
+        initGoogleMapUtils();
     }
 
 
@@ -138,7 +138,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
     /**
      * google map 地圖設定
      */
-    private void initGooglemapUtils() {
+    private void initGoogleMapUtils() {
         //隱藏準心按鈕
         googleMap.getUiSettings().setMyLocationButtonEnabled(false);
         //資訊視窗樣式
@@ -185,8 +185,12 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                 } else if ((int) data.get("type") == TYPE_DIRECTION) {
                     DirectionInfo directionInfo = (DirectionInfo) data.get("data");
                     addPolyLineOnMap(directionInfo);
-                    double targetLat = markerTarget == null ? destinationMarker.getPosition().latitude : markerTarget.getPosition().latitude;
-                    double targetLng = markerTarget == null ? destinationMarker.getPosition().longitude : markerTarget.getPosition().longitude;
+                    double targetLat = destinationMarker.getPosition().latitude;
+                    double targetLng = destinationMarker.getPosition().longitude;
+                    if (markerTarget != null) {
+                        targetLat = markerTarget.getPosition().latitude;
+                        targetLng = markerTarget.getPosition().longitude;
+                    }
                     connect.connectToGetDistance(getUserLocation().getLatitude(), getUserLocation().getLongitude(), targetLat, targetLng);
 
                     //地方資訊
@@ -201,6 +205,7 @@ public class MainActivity extends BasicMapActivity implements GoogleMap.OnInfoWi
                     String distance = String.format(getString(R.string.distance_meter), (distanceInfo.getRows().get(0).getElements().get(0).getDistance().getValue() / 10));
                     String time = String.format(getString(R.string.distance_time), (distanceInfo.getRows().get(0).getElements().get(0).getDuration().getValue() / 60));
                     displaySnackbar(distance, time);
+
                 } else {
                     String errString = (String) data.get("data");
                     Toast.makeText(MainActivity.this, errString, Toast.LENGTH_SHORT).show();

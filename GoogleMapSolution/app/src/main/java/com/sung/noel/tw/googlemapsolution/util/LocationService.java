@@ -14,7 +14,6 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -22,15 +21,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.basic.BasicLocationActivity;
-import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
-
-import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnNeverAskAgain;
-import permissions.dispatcher.OnPermissionDenied;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
-import permissions.dispatcher.RuntimePermissions;
 
 //@RuntimePermissions
 public class LocationService extends Service implements GoogleApiClient.ConnectionCallbacks,

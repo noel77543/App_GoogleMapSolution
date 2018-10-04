@@ -1,21 +1,13 @@
 package com.sung.noel.tw.googlemapsolution.connect;
 
 import android.content.Context;
+import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.google.gson.Gson;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
-
-import cz.msebera.android.httpclient.Header;
 import com.sung.noel.tw.googlemapsolution.R;
+import com.sung.noel.tw.googlemapsolution.base.BaseConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
 import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
@@ -24,17 +16,24 @@ import com.sung.noel.tw.googlemapsolution.main.model.DistanceInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.PlaceDetail;
 import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
 
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Request;
+import okhttp3.Response;
+
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTION;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DISTANCE;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_LOCATION;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
 
-/**
- * Created by noel on 2017/8/16.
- */
+public class GoogleConnect extends BaseConnect {
 
-public class GoogleConnect extends BasicJsonConnect {
     private DirectionInfo directionInfo;
     private AddressInfo addressInfo;
     private PlaceInfo placeInfo;
@@ -44,7 +43,6 @@ public class GoogleConnect extends BasicJsonConnect {
 
     public GoogleConnect(Context context) {
         super(context);
-
         this.context = (MainActivity) context;
     }
     //--------------------------------------------------
@@ -56,32 +54,26 @@ public class GoogleConnect extends BasicJsonConnect {
      * 解析後即可取得所有該經緯度地址資訊
      */
     public void connectToGetAddress(final double latitude, final double longitude) {
-        RequestParams params = new RequestParams();
-        params.put("latlng", latitude + "," + longitude);
-        params.put("language", "zh-TW");
+
         loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
             loadingImageCircleDialog.showLoadingDialog();
-            client.get(ConnectInfo.API_GOOGLE_GEOCODE, params, new JsonHttpResponseHandler() {
+            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_GEOCODE, latitude + "," + longitude, "zh-TW");
+            request = new Request.Builder().url(url).get().build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
+                public void onFailure(Call call, IOException e) {
                     loadingImageCircleDialog.dismiss();
-                    addressInfo = new Gson().fromJson(response.toString(), AddressInfo.class);
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                    loadingImageCircleDialog.dismiss();
+                    reader = response.body().charStream();
+                    addressInfo = gson.fromJson(reader, AddressInfo.class);
                     EventCenter.getInstance().sendAddress(TYPE_ADDRESS, addressInfo);
-                }
-
-                @Override
-                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingImageCircleDialog.dismiss();
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingImageCircleDialog.dismiss();
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
             });
         } else {
@@ -102,7 +94,7 @@ public class GoogleConnect extends BasicJsonConnect {
         double longitude = 0;
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
-            List<android.location.Address> addressRequest = geocoder.getFromLocationName(address, 1);
+            List<Address> addressRequest = geocoder.getFromLocationName(address, 1);
             if (addressRequest.size() > 0) {
                 latitude = addressRequest.get(0).getLatitude();
                 longitude = addressRequest.get(0).getLongitude();
@@ -129,30 +121,20 @@ public class GoogleConnect extends BasicJsonConnect {
         String mode = "walking";
         String key = context.getString(R.string.google_maps_key);
 
-        RequestParams params = new RequestParams();
-        params.put("origin", origin);
-        params.put("destination", destination);
-        params.put("mode", mode);
-        params.put("key", key);
-        params.put("language", "zh-TW");
         if (isNetWorkable()) {
-            client.get(ConnectInfo.API_GOOGLE_DIRECTION, params, new JsonHttpResponseHandler() {
+            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_DIRECTION, origin, destination, mode, key, "zh-TW");
+            request = new Request.Builder().url(url).get().build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
-                    directionInfo = new Gson().fromJson(response.toString(), DirectionInfo.class);
+                public void onFailure(Call call, IOException e) {
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    reader = response.body().charStream();
+                    directionInfo = gson.fromJson(reader, DirectionInfo.class);
                     EventCenter.getInstance().sendRoute(TYPE_DIRECTION, directionInfo);
-                }
-
-                @Override
-                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
             });
         } else {
@@ -165,41 +147,34 @@ public class GoogleConnect extends BasicJsonConnect {
      * 取得地方資訊
      */
     public void connectToGetPlace(String lat, String lng, String type) {
-        RequestParams params = new RequestParams();
-        params.put("location", lat + "," + lng);
-        params.put("radius", 500);
-        params.put("types", type);
-        params.put("language", "zh-tw");
-        params.put("key", context.getString(R.string.google_maps_key));
 
+        String location = lat + "," + lng;
+        int radius = 500;
+        String language = "zh-tw";
+        String key = context.getString(R.string.google_maps_key);
         loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
         if (isNetWorkable()) {
             loadingImageCircleDialog.showLoadingDialog();
-            client.get(ConnectInfo.API_GOOGLE_PLACE, params, new JsonHttpResponseHandler() {
+            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_PLACE, location, radius, type, language, key);
+
+            request = new Request.Builder().url(url).get().build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
+                public void onFailure(Call call, IOException e) {
                     loadingImageCircleDialog.dismiss();
-                    placeInfo = new Gson().fromJson(response.toString(), PlaceInfo.class);
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    loadingImageCircleDialog.dismiss();
+                    reader = response.body().charStream();
+                    placeInfo = gson.fromJson(reader, PlaceInfo.class);
                     if (placeInfo.getStatus().equals("OK")) {
                         EventCenter.getInstance().sendPlace(TYPE_PLACE, placeInfo);
                     } else {
                         EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_googlemap_non_place));
                     }
-
-                }
-
-                @Override
-                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    loadingImageCircleDialog.dismiss();
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    loadingImageCircleDialog.dismiss();
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
                 }
             });
         } else {
@@ -259,35 +234,30 @@ public class GoogleConnect extends BasicJsonConnect {
      * 距離, 需時
      */
     public void connectToGetDistance(double startLat, double startLng, double endLat, double endLng) {
-        RequestParams params = new RequestParams();
-        params.put("origins", startLat + "," + startLng);
-        params.put("destinations", endLat + "," + endLng);
-        params.put("language", "zh-tw");
-        params.put("key", context.getString(R.string.google_maps_key));
+
+        String origins = startLat + "," + startLng;
+        String destinations = endLat + "," + endLng;
+        String language = "zh-tw";
+        String key = context.getString(R.string.google_maps_key);
 
         if (isNetWorkable()) {
-            client.get(ConnectInfo.API_GOOGLE_MATRIX, params, new JsonHttpResponseHandler() {
+            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_MATRIX, origins, destinations, language, key);
+            request = new Request.Builder().url(url).get().build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    super.onSuccess(statusCode, headers, response);
-                    distanceInfo = new Gson().fromJson(response.toString(), DistanceInfo.class);
+                public void onFailure(Call call, IOException e) {
+                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    reader = response.body().charStream();
+                    distanceInfo = gson.fromJson(reader, DistanceInfo.class);
                     if (distanceInfo.getStatus().equals("OK")) {
                         EventCenter.getInstance().sendDistance(TYPE_DISTANCE, distanceInfo);
                     } else {
                         EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_googlemap_non_distance));
                     }
-
-                }
-
-                @Override
-                public void onFailure(int i, Header[] headers, String s, Throwable throwable) {
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-                    EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_distance));
                 }
             });
         } else {

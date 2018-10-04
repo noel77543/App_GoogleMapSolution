@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">GoogleMap個人使用統整</string>
+    <string name="app_name_debug">GoogleMap個人使用統整_開發版</string>
+
     <string name="title_activity_maps">Map</string>
     <string name="map_latitude">緯度：</string>
     <string name="map_longitude">經度：</string>

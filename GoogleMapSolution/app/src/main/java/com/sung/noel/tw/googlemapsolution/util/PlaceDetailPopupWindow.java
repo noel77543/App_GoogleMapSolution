@@ -11,18 +11,20 @@ import com.bumptech.glide.Glide;
 
 import butterknife.ButterKnife;
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.basic.BasicPopupWindow;
+import com.sung.noel.tw.googlemapsolution.base.BasePopupWindow;
+import com.sung.noel.tw.googlemapsolution.connect.ConnectInfo;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
 import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
 
-import static com.sung.noel.tw.googlemapsolution.connect.ConnectInfo.API_GOOGLE_PHOTO_REFERENCE;
+import java.text.MessageFormat;
+
 
 /**
  * Created by noel on 2017/12/8.
  */
 
-public class PlaceDetailPopupWindow extends BasicPopupWindow {
+public class PlaceDetailPopupWindow extends BasePopupWindow {
     private MainActivity mainActivity;
     private View view;
     private PlaceInfo.ResultsBean resultBeans;
@@ -96,14 +98,9 @@ public class PlaceDetailPopupWindow extends BasicPopupWindow {
         if (resultBeans.getPhotos() != null) {
             Glide
                     .with(mainActivity)
-                    .load(String.format(API_GOOGLE_PHOTO_REFERENCE, resultBeans.getPhotos().get(0).getPhotoReference(), mainActivity.getString(R.string.google_maps_key)))
+                    .load(MessageFormat.format(ConnectInfo.API_GOOGLE_PHOTO_REFERENCE, resultBeans.getPhotos().get(0).getPhotoReference(), mainActivity.getString(R.string.google_maps_key)))
                     .into(placeDetailPhoto);
         } else {
-            Glide
-                    .with(mainActivity)
-                    .load(0)
-                    .into(placeDetailPhoto);
-
             EventCenter.getInstance().sendConnectErrorEvent(mainActivity.getString(R.string.toast_googlemap_non_place_image));
         }
 

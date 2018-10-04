@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.basic;
+package com.sung.noel.tw.googlemapsolution.base;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -9,11 +9,11 @@ import android.widget.PopupWindow;
  * Created by noel on 2017/12/1.
  */
 
-public class BasicPopupWindow extends PopupWindow {
+public class BasePopupWindow extends PopupWindow {
     private int windowHeight;
     private int windowWidth;
 
-    public BasicPopupWindow(Activity activity) {
+    public BasePopupWindow(Activity activity) {
         windowHeight = activity.getWindowManager().getDefaultDisplay().getHeight();
         windowWidth = activity.getWindowManager().getDefaultDisplay().getWidth();
         setFocusable(true);

@@ -12,7 +12,17 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+//        debug {
+//            //使debug 的package 後贅加入debug
+//            applicationIdSuffix ".debug"
+//            resValue "string", "app_name", "@string/app_name_debug"
+//            minifyEnabled false
+//            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//
+//        }
         release {
+            resValue "string", "app_name", "@string/app_name"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -37,8 +47,8 @@ dependencies {
     compile 'com.google.android.gms:play-services-places:10.2.0'
     //design
     compile 'com.android.support:design:25.0.0'
-    //async-http
-    compile 'com.loopj.android:android-async-http:1.4.9'
+//    //async-http
+//    compile 'com.loopj.android:android-async-http:1.4.9'
     //Gson
     compile 'com.google.code.gson:gson:2.8.0'
     //glide

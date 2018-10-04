@@ -30,14 +30,14 @@ import permissions.dispatcher.RuntimePermissions;
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.ar.model.TargetData;
 import com.sung.noel.tw.googlemapsolution.ar.util.SensorUtil;
-import com.sung.noel.tw.googlemapsolution.basic.BasicLocationActivity;
+import com.sung.noel.tw.googlemapsolution.base.BaseLocationActivity;
 
 import static com.sung.noel.tw.googlemapsolution.util.BundleInfo.LAT;
 import static com.sung.noel.tw.googlemapsolution.util.BundleInfo.LNG;
 import static com.sung.noel.tw.googlemapsolution.util.BundleInfo.PLACE_NAME;
 
 @RuntimePermissions
-public class ArActivity extends BasicLocationActivity implements SurfaceHolder.Callback, SensorUtil.OnSensorFormatDirectionGetListener {
+public class ArActivity extends BaseLocationActivity implements SurfaceHolder.Callback, SensorUtil.OnSensorFormatDirectionGetListener {
 
     @BindView(R.id.tv_location)
     TextView tvTargetLocation;

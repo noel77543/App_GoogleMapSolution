@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.basic;
+package com.sung.noel.tw.googlemapsolution.base;
 
 import android.Manifest;
 import android.content.Context;
@@ -28,7 +28,7 @@ import com.sung.noel.tw.googlemapsolution.R;
  * Created by noel on 2017/12/5.
  */
 
-public abstract class BasicMapActivity extends BasicLocationActivity implements OnMapReadyCallback {
+public abstract class BaseMapActivity extends BaseLocationActivity implements OnMapReadyCallback {
 
     //判斷是否初次進來 需聚焦在目前位置
     public GoogleMap googleMap;
