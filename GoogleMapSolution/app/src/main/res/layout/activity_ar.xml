@@ -24,7 +24,6 @@
             android:layout_weight="1"
             android:background="@android:color/transparent"
             android:gravity="center"
-            android:textColor="@color/colorAccent"
             android:textSize="20sp"
             tools:text="TextView" />
 

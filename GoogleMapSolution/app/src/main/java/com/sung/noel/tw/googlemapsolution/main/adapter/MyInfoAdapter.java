@@ -34,7 +34,7 @@ public class MyInfoAdapter implements GoogleMap.InfoWindowAdapter {
 
     @Override
     public View getInfoContents(Marker marker) {
-        View v = context.getLayoutInflater().inflate(R.layout.map_info, null);
+        View v = context.getLayoutInflater().inflate(R.layout.marker_map, null);
         ButterKnife.bind(this, v);
         tvName.setText(marker.getTitle());
         tvLocation.setText(String.format(context.getString(R.string.ar_target_location),marker.getPosition().longitude+"", marker.getPosition().latitude+""));

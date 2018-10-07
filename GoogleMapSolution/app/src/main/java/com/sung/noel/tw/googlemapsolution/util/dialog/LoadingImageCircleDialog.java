@@ -32,7 +32,7 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
     private LinearInterpolator linearInterpolator;
     public LoadingImageCircleDialog(Context context) {
         super(context);
-        setContentView(R.layout.dialog_img_circle);
+        setContentView(R.layout.dialog_load);
         ButterKnife.bind(this);
         init();
     }

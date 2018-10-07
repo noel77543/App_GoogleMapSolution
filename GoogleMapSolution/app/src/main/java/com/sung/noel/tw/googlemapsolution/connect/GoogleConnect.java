@@ -10,11 +10,11 @@ import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.base.BaseConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
-import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DirectionInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DistanceInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceDetail;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.AddressInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DirectionInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceDetail;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -157,6 +157,7 @@ public class GoogleConnect extends BaseConnect {
             loadingImageCircleDialog.showLoadingDialog();
             String url = MessageFormat.format(ConnectInfo.API_GOOGLE_PLACE, location, radius, type, language, key);
 
+            Log.e("TTT",url);
             request = new Request.Builder().url(url).get().build();
             client.newCall(request).enqueue(new Callback() {
                 @Override

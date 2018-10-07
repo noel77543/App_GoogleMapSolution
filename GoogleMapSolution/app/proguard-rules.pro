@@ -23,3 +23,11 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+
+#for OKHttp
+-dontwarn okio.**
+-dontwarn okhttp3.**
+
+#for firebase real time databse
+-keepattributes Signature

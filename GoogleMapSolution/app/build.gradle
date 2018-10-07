@@ -39,16 +39,43 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
+//    //map
+//    compile 'com.google.maps.android:android-maps-utils:0.4.+'
+//    //location
+//    compile 'com.google.android.gms:play-services-location:10.2.0'
+//    //place
+//    compile 'com.google.android.gms:play-services-places:10.2.0'
+//    //Firebase Cloud Message
+//    compile 'com.google.firebase:firebase-messaging:10.2.0'
+//    //Firebase Crashlytics
+//    compile 'com.crashlytics.sdk.android:crashlytics:2.9.3'
+//    //Firebase Analytics
+//    compile 'com.google.firebase:firebase-core:10.2.0'
+//    //Firebase Database
+//    compile 'com.google.firebase:firebase-database:10.2.0'
+
+
     //map
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
     //location
-    compile 'com.google.android.gms:play-services-location:10.2.0'
+    compile 'com.google.android.gms:play-services-location:16.0.0'
     //place
-    compile 'com.google.android.gms:play-services-places:10.2.0'
+    compile 'com.google.android.gms:play-services-places:16.0.0'
+    //Firebase Cloud Message
+    compile 'com.google.firebase:firebase-messaging:17.3.3'
+    //Firebase Crashlytics
+    compile 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    //Firebase Analytics
+    compile 'com.google.firebase:firebase-core:16.0.4'
+    //Firebase Database
+    compile 'com.google.firebase:firebase-database:16.0.3'
+
+
+
+
+
     //design
     compile 'com.android.support:design:25.0.0'
-//    //async-http
-//    compile 'com.loopj.android:android-async-http:1.4.9'
     //Gson
     compile 'com.google.code.gson:gson:2.8.0'
     //glide
@@ -62,12 +89,6 @@ dependencies {
     //PermissionsDispatcher
     compile 'com.github.hotchemi:permissionsdispatcher:2.2.0'
     apt 'com.github.hotchemi:permissionsdispatcher-processor:2.2.0'
-    //Firebase Cloud Message
-    compile 'com.google.firebase:firebase-messaging:10.2.0'
-    //Firebase Crashlytics
-    compile 'com.crashlytics.sdk.android:crashlytics:2.9.3'
-    //Firebase Analytics
-    compile 'com.google.firebase:firebase-core:10.2.0'
     //okHttp
     compile 'com.squareup.okhttp3:okhttp:3.11.0'
 }

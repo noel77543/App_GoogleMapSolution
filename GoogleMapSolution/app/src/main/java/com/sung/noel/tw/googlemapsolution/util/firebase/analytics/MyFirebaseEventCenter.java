@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.util.firebase;
+package com.sung.noel.tw.googlemapsolution.util.firebase.analytics;
 
 import android.content.Context;
 import android.os.Bundle;

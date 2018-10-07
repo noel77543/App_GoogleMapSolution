@@ -82,11 +82,20 @@
     <string name="snackbar_distance_googlemap_action">詳細資訊 ➢</string>
     <string name="place_detail_status_is_working">營業中</string>
     <string name="place_detail_status_not_working">休息</string>
-
+    <string name="common_yes">是</string>
+    <string name="common_no">否</string>
+    
+    
     <!--notification-->
     <string name="notification_message">距離監測中...</string>
     <string name="notification_finish">結束</string>
     <string name="notification_display">查看</string>
+
+    <!--talk board-->
+    <string name="talk_board_announcement">公告 : </string>
+    <string name="talk_board_edit_hint">請輸入字串 ...</string>
+
+
 
 
     <!--AR-->
@@ -94,9 +103,6 @@
     <string name="ar_refuse_camera">若拒絕此權限請求,即無法使用AR導引功能。</string>
     <string name="ar_target_location">經度：%1$s\n緯度：%2$s</string>
     <string name="ar_none_sensor">此裝置不具備方向傳感器</string>
-
-    <!--others-->
-    <string name="common_yes">是</string>
-    <string name="common_no">否</string>
+    
 
 </resources>

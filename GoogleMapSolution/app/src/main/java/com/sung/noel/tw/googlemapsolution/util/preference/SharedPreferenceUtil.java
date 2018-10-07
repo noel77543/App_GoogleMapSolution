@@ -6,7 +6,7 @@ import android.support.annotation.StringDef;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

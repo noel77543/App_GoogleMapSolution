@@ -14,7 +14,7 @@ import java.util.Map;
 
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
 
 /**

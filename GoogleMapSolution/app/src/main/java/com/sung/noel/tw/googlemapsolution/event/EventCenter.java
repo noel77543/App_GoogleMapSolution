@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DirectionInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DistanceInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.AddressInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DirectionInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 
 /**
  * Created by noel on 2017/8/16.

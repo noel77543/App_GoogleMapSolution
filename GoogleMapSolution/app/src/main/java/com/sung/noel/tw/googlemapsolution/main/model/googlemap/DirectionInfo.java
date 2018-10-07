@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.main.model;
+package com.sung.noel.tw.googlemapsolution.main.model.googlemap;
 
 import java.util.List;
 

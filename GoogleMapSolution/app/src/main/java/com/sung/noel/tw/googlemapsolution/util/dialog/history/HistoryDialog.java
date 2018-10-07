@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 import com.sung.noel.tw.googlemapsolution.util.dialog.history.adapter.HistoryPagerAdapter;
 import com.sung.noel.tw.googlemapsolution.util.preference.SharedPreferenceUtil;
 

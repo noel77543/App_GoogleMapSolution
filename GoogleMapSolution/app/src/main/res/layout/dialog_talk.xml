@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:drawable/screen_background_dark_transparent"
+    android:padding="5dp">
+
+
+    <TextView
+        android:id="@+id/tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:text="@string/talk_board_announcement"
+        android:textColor="@color/talk_board_title_text"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_toEndOf="@+id/tv_header"
+        android:layout_toLeftOf="@+id/btn_close"
+        android:layout_toRightOf="@+id/tv_header"
+        android:layout_toStartOf="@+id/btn_close"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:singleLine="true"
+        android:textColor="@color/notification_center"
+        android:textSize="20sp"
+        tools:text="AAAAAAAAAA" />
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/talk_board_title_text"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="X"
+        android:textColor="@android:color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/edit_text_view"
+        android:layout_below="@+id/tv_header"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_talk_bg" />
+
+
+    <EditText
+        android:id="@+id/edit_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/btn_sent"
+        android:layout_toStartOf="@+id/btn_sent"
+        android:hint="@string/talk_board_edit_hint"
+        android:inputType="text"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_sent"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/ic_sent" />
+</RelativeLayout>

@@ -44,15 +44,16 @@ import com.sung.noel.tw.googlemapsolution.base.BaseMapActivity;
 import com.sung.noel.tw.googlemapsolution.connect.GoogleConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.adapter.MyInfoAdapter;
-import com.sung.noel.tw.googlemapsolution.main.model.AddressInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DirectionInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.DistanceInfo;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.AddressInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DirectionInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 import com.sung.noel.tw.googlemapsolution.navigation.NavigationDrawer;
 import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
-import com.sung.noel.tw.googlemapsolution.util.firebase.MyFirebaseEventCenter;
+import com.sung.noel.tw.googlemapsolution.util.dialog.talk.TalkBoardDialog;
+import com.sung.noel.tw.googlemapsolution.util.firebase.analytics.MyFirebaseEventCenter;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTION;
@@ -91,11 +92,12 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     private Marker destinationMarker;
     private String markerTitle;
 
-    // butterknife
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
     @BindView(R.id.edit)
     MultiAutoCompleteTextView edit;
+    @BindView(R.id.btn_talk)
+    Button btnTalk;
     @BindView(R.id.btn_focus)
     Button btnFocus;
     @BindView(R.id.btn_reload)
@@ -107,7 +109,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawerLayout;
 
-
+    private TalkBoardDialog talkBoardDialog;
     private PlaceDetailPopupWindow placeDetailPopupWindow;
     private MyFirebaseEventCenter myFirebaseEventCenter;
 
@@ -128,6 +130,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
+        talkBoardDialog = new TalkBoardDialog(this);
         initGoogleMapUtils();
     }
 
@@ -224,7 +227,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
      *  display snackbar
      */
     private void displaySnackbar(String distance, String time) {
-        Snackbar.make(coordinatorLayout, String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_INDEFINITE)
+        Snackbar.make(coordinatorLayout, String.format(getString(R.string.snackbar_distance_googlemap), distance, time), Snackbar.LENGTH_LONG)
                 .setActionTextColor(getResources().getColor(android.R.color.white))
                 .setAction(getString(R.string.snackbar_distance_googlemap_action), this)
                 .show();
@@ -374,16 +377,21 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
 
 
     //----------
-    @OnClick({R.id.btn_focus, R.id.btn_reload})
+    @OnClick({R.id.btn_focus, R.id.btn_reload, R.id.btn_talk})
     public void onViewClicked(View view) {
         switch (view.getId()) {
+            //定位
             case R.id.btn_focus:
                 goToTargetLocation(new LatLng(getUserLocation().getLatitude(), getUserLocation().getLongitude()), MAP_SIZE_SMALL);
                 break;
-
+            //重載
             case R.id.btn_reload:
                 googleMap.clear();
                 getLocationPermissionsWithCheck();
+                break;
+            //聊天室
+            case R.id.btn_talk:
+                talkBoardDialog.show();
                 break;
         }
     }

@@ -15,7 +15,7 @@ import com.sung.noel.tw.googlemapsolution.base.BasePopupWindow;
 import com.sung.noel.tw.googlemapsolution.connect.ConnectInfo;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
-import com.sung.noel.tw.googlemapsolution.main.model.PlaceInfo;
+import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 
 import java.text.MessageFormat;
 

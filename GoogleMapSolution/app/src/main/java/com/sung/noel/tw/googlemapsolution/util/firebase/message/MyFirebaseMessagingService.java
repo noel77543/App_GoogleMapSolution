@@ -1,10 +1,8 @@
-package com.sung.noel.tw.googlemapsolution.util.firebase;
+package com.sung.noel.tw.googlemapsolution.util.firebase.message;
 
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.connect.ConnectInfo;
 import com.sung.noel.tw.googlemapsolution.util.CustomNotification;
 
 import java.util.Map;
