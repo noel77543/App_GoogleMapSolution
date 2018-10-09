@@ -1,6 +1,7 @@
 package com.sung.noel.tw.googlemapsolution.util.firebase.database;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -9,9 +10,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.model.FirebaseData;
 
+import java.util.ArrayList;
+
 public class MyFirebaseDataBaseCenter implements ValueEventListener {
     private DatabaseReference databaseReference;
     private OnFirebaseDataChangeListener onFirebaseDataChangeListener;
+    private DataSnapshot dataSnapshot;
 
     public MyFirebaseDataBaseCenter() {
         databaseReference = FirebaseDatabase.getInstance().getReference();
@@ -22,23 +26,52 @@ public class MyFirebaseDataBaseCenter implements ValueEventListener {
     /***
      * 註冊 使用者
      */
-    public void registerUser(FirebaseData.RegisterBean registerBean){
-        databaseReference.child("Register").setValue(registerBean);
+    public void registerUser(FirebaseData.RegisterBean registerBean, int index) {
+        DatabaseReference newRef = databaseReference.child("Register").child(String.valueOf(index));
+        newRef.setValue(registerBean);
     }
-
 
 
     //-------------
 
     /***
      *  使用者 發送字串訊息
-     * @param registerBean
+     * @param boardBean
      */
-    public void sendMessage(FirebaseData.BoardBean registerBean){
-        databaseReference.child("Board").setValue(registerBean);
+    public void sendMessage(FirebaseData.BoardBean boardBean, int index) {
+        DatabaseReference newRef = databaseReference.child("Board").child(String.valueOf(index));
+        newRef.setValue(boardBean);
     }
 
+    //--------------
 
+
+    /***
+     * 登入
+     */
+    public void login(FirebaseData.OnlineBean onlineBean, int index) {
+        DatabaseReference newRef = databaseReference.child("Online").child(String.valueOf(index));
+        newRef.setValue(onlineBean);
+    }
+
+    //-------------
+
+    /***
+     *  登出
+     */
+    public void logout(FirebaseData.OnlineBean onlineBean) {
+        if (dataSnapshot != null && onlineBean != null) {
+            ArrayList<FirebaseData.OnlineBean> onlineBeans = dataSnapshot.getValue(FirebaseData.class).getOnline();
+            for (int i = 0; i < onlineBeans.size(); i++) {
+                FirebaseData.OnlineBean currentOnlineBean = onlineBeans.get(i);
+                if (currentOnlineBean.getUuid().equals(onlineBean.getUuid())) {
+                    onlineBeans.remove(i);
+                }
+            }
+
+            databaseReference.child("Online").setValue(onlineBeans);
+        }
+    }
 
 
     //--------------
@@ -46,6 +79,7 @@ public class MyFirebaseDataBaseCenter implements ValueEventListener {
 
     @Override
     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        this.dataSnapshot = dataSnapshot;
         onFirebaseDataChangeListener.onFirebaseDataChange(dataSnapshot.getValue(FirebaseData.class));
     }
 

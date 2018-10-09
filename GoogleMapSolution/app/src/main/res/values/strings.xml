@@ -10,7 +10,7 @@
     <string name="toast_neepermission">此行為需要位置權限</string>
     <string name="toast_noninfomation">點選的位置不具備地址資訊</string>
     <string name="toast_route">取得前往：「{0}」的最佳路徑？</string>
-    <string name="toast_name_length_error">註冊失敗 - 最大名稱字數為: 5</string>
+    <string name="toast_name_length_error">註冊失敗 - 名稱字數需為: 1~5個字元</string>
     <string name="toast_same_name_error">註冊失敗 - 名稱重複</string>
 
 
@@ -99,7 +99,7 @@
     <string name="talk_board_edit_hint">請輸入字串 ...</string>
     <string name="talk_name">%s 說: </string>
     <string name="talk_register">註冊</string>
-
+    <string name="talk_online">線上人數 : %1$d/%2$d</string>
 
     <!--AR-->
     <string name="ar_message_camera">是否同意開啟相機權限,以便執行AR導引功能。</string>

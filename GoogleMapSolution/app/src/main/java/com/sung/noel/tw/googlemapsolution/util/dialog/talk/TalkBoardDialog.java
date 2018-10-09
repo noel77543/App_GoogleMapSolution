@@ -1,5 +1,6 @@
 package com.sung.noel.tw.googlemapsolution.util.dialog.talk;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.provider.Settings;
@@ -7,11 +8,13 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.sung.noel.tw.googlemapsolution.R;
+import com.sung.noel.tw.googlemapsolution.main.MainActivity;
 import com.sung.noel.tw.googlemapsolution.util.TimeUtil;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.adapter.TalkAdapter;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.register.RegisterDialog;
@@ -38,6 +41,9 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
     Button btnClose;
     @BindView(R.id.tv_announcement)
     TextView tvAnnouncement;
+    @BindView(R.id.tv_online)
+    TextView tvOnline;
+
 
     private MyFirebaseDataBaseCenter myFirebaseDataBaseCenter;
     private TalkAdapter talkAdapter;
@@ -45,27 +51,26 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
     private SharedPreferenceUtil sharedPreferenceUtil;
     private RegisterDialog registerDialog;
     private TimeUtil timeUtil;
-
+    private Context context;
 
     public TalkBoardDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.dialog_talk);
         ButterKnife.bind(this);
-        setCancelable(false);
+        this.context = context;
         init();
     }
 
     //----------------
     private void init() {
         timeUtil = new TimeUtil();
-        registerDialog = new RegisterDialog(getContext());
-        sharedPreferenceUtil = new SharedPreferenceUtil(getContext(), SharedPreferenceUtil.NAME_TALK_BOARD);
-        talkAdapter = new TalkAdapter(getContext());
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        registerDialog = new RegisterDialog(context);
+        sharedPreferenceUtil = new SharedPreferenceUtil(context, SharedPreferenceUtil.NAME_TALK_BOARD);
+        talkAdapter = new TalkAdapter(context);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(talkAdapter);
         myFirebaseDataBaseCenter = new MyFirebaseDataBaseCenter();
         myFirebaseDataBaseCenter.setOnFirebaseDataChangeListener(this);
-
 
     }
     //----------------
@@ -76,15 +81,21 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
             //發送
             case R.id.btn_sent:
                 if (firebaseData != null) {
-                    //如果完成註冊 或 已註冊過
-                    if (isRegistered(sharedPreferenceUtil.getUserName())) {
+                    String message = editTextView.getText().toString();
 
-                        FirebaseData.BoardBean boardBean = new FirebaseData.BoardBean();
-                        boardBean.setName(sharedPreferenceUtil.getUserName());
-                        boardBean.setText(editTextView.getText().toString());
-                        boardBean.setTime(timeUtil.getCurrentTime());
-                        boardBean.setUuid( Settings.System.getString(getContext().getContentResolver(), Settings.System.ANDROID_ID));
-                        myFirebaseDataBaseCenter.sendMessage(boardBean);
+                    //如果完成註冊 或 已註冊過
+                    if (isRegistered(Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID))) {
+                        if (!message.equals("")) {
+                            FirebaseData.BoardBean boardBean = new FirebaseData.BoardBean();
+                            boardBean.setName(sharedPreferenceUtil.getUserName());
+                            boardBean.setText(message);
+                            boardBean.setTime(timeUtil.getCurrentTime());
+                            boardBean.setUuid(Settings.System.getString(context.getContentResolver(), Settings.System.ANDROID_ID));
+                            myFirebaseDataBaseCenter.sendMessage(boardBean, firebaseData.getBoard().size());
+                            editTextView.setText("");
+                            hideKeyboard((MainActivity) context);
+                            tvAnnouncement.requestFocus();
+                        }
                     }
                     //如果還沒註冊
                     else {
@@ -98,6 +109,14 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
                 break;
         }
     }
+
+    //-------------
+    public void showDialog() {
+        tvAnnouncement.requestFocus();
+        show();
+    }
+
+
     //----------------
 
     /***
@@ -110,6 +129,8 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
             this.firebaseData = firebaseData;
             talkAdapter.setData(firebaseData.getBoard());
             tvAnnouncement.setText(firebaseData.getAnnouncement());
+            //online 需要-1 因為有一個是作為模組的存在 並非真實使用者
+            tvOnline.setText(String.format(context.getString(R.string.talk_online), firebaseData.getOnline().size() - 1, firebaseData.getRegister().size()));
         }
     }
 
@@ -132,4 +153,16 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
         return false;
     }
 
+    //---------
+
+    /***
+     *  隱藏鍵盤
+     */
+    private void hideKeyboard(Activity activity) {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
 }

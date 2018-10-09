@@ -27,6 +27,7 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
     EditText editText;
     @BindView(R.id.btn_register)
     Button btnRegister;
+
     private FirebaseData firebaseData;
     private MyFirebaseDataBaseCenter myFirebaseDataBaseCenter;
     private TimeUtil timeUtil;
@@ -56,8 +57,9 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
         String name = editText.getText().toString();
         //如若該名稱允許註冊
         if (isAllowedName(name)) {
-            myFirebaseDataBaseCenter.registerUser(getUserData(name));
+            myFirebaseDataBaseCenter.registerUser(getUserData(name),firebaseData.getRegister().size());
             sharedPreferenceUtil.setUsetName(name);
+            dismiss();
         }
     }
     //---------------
@@ -93,7 +95,7 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
             }
         }
 
-        if (name.length() > 5) {
+        if (name.length() > 5 || name.equals("")) {
             Toast.makeText(getContext(), getContext().getString(R.string.toast_name_length_error), Toast.LENGTH_SHORT).show();
             return false;
         }

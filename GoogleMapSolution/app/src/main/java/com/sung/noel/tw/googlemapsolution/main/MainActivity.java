@@ -3,9 +3,12 @@ package com.sung.noel.tw.googlemapsolution.main;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -54,6 +57,9 @@ import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.TalkBoardDialog;
 import com.sung.noel.tw.googlemapsolution.util.firebase.analytics.MyFirebaseEventCenter;
+import com.sung.noel.tw.googlemapsolution.util.firebase.database.MyFirebaseDataBaseCenter;
+import com.sung.noel.tw.googlemapsolution.util.firebase.database.model.FirebaseData;
+import com.sung.noel.tw.googlemapsolution.util.preference.SharedPreferenceUtil;
 
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_ADDRESS;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTION;
@@ -65,7 +71,7 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener {
+public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, MyFirebaseDataBaseCenter.OnFirebaseDataChangeListener {
 
     private final float MAP_SIZE_SMALL = 12.0f;
     private final float MAP_SIZE_NORMAL = 15.5f;
@@ -112,6 +118,32 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     private TalkBoardDialog talkBoardDialog;
     private PlaceDetailPopupWindow placeDetailPopupWindow;
     private MyFirebaseEventCenter myFirebaseEventCenter;
+    private MyFirebaseDataBaseCenter myFirebaseDataBaseCenter;
+    private FirebaseData firebaseData;
+    private SharedPreferenceUtil sharedPreferenceUtil;
+    private FirebaseData.OnlineBean onlineBean;
+    private boolean isLogin = false;
+    //剛開啟App的boolean 判斷  會影響Login
+    private boolean isStartUsed = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sharedPreferenceUtil = new SharedPreferenceUtil(this, SharedPreferenceUtil.NAME_TALK_BOARD);
+        myFirebaseDataBaseCenter = new MyFirebaseDataBaseCenter();
+        myFirebaseEventCenter = new MyFirebaseEventCenter(this);
+        navigationDrawer = new NavigationDrawer(this);
+        navigationDrawer.setOnNavigationItemClickListener(this);
+        adapter = new MyInfoAdapter(this);
+        connect = new GoogleConnect(this);
+        placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
+        talkBoardDialog = new TalkBoardDialog(this);
+
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_START);
+        myFirebaseDataBaseCenter.setOnFirebaseDataChangeListener(this);
+        edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+        edit.setOnKeyListener(this);
+    }
 
     @Override
     protected int getContentViewId() {
@@ -120,18 +152,42 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
 
     @Override
     protected void init() {
-        myFirebaseEventCenter = new MyFirebaseEventCenter(this);
-        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_START);
-
-        edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-        edit.setOnKeyListener(this);
-        navigationDrawer = new NavigationDrawer(this);
-        navigationDrawer.setOnNavigationItemClickListener(this);
-        adapter = new MyInfoAdapter(this);
-        connect = new GoogleConnect(this);
-        placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
-        talkBoardDialog = new TalkBoardDialog(this);
         initGoogleMapUtils();
+    }
+
+    //-------
+
+    /***
+     * 登入
+     */
+    private void login() {
+        if (!isLogin) {
+            String name = sharedPreferenceUtil.getUserName();
+            //已經註冊的對象
+            if (firebaseData != null && !name.equals("")) {
+                Log.e("loginTTT", "login");
+                onlineBean = new FirebaseData.OnlineBean();
+                onlineBean.setName(name);
+                onlineBean.setUuid(Settings.System.getString(getContentResolver(), Settings.System.ANDROID_ID));
+                myFirebaseDataBaseCenter.login(onlineBean, firebaseData.getOnline().size());
+                isLogin = true;
+            }
+        }
+    }
+
+    //--------
+
+    /***
+     * 登出
+     */
+    private void logout() {
+        if (isLogin) {
+            if (firebaseData != null) {
+                Log.e("logoutTTT", "logout");
+                myFirebaseDataBaseCenter.logout(onlineBean);
+                isLogin = false;
+            }
+        }
     }
 
 
@@ -157,6 +213,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     public void onResume() {
         super.onResume();
         EventBus.getDefault().register(this);
+        login();
     }
 
     //----------
@@ -164,6 +221,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     public void onPause() {
         super.onPause();
         EventBus.getDefault().unregister(this);
+        logout();
     }
 
     //----------
@@ -391,7 +449,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
                 break;
             //聊天室
             case R.id.btn_talk:
-                talkBoardDialog.show();
+                talkBoardDialog.showDialog();
                 break;
         }
     }
@@ -412,6 +470,23 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         }
         myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_MAP_PLACE_DETAIL);
     }
+
+
+    //---------
+
+    /***
+     * 當 real time db資料改變
+     * @param firebaseData
+     */
+    @Override
+    public void onFirebaseDataChange(FirebaseData firebaseData) {
+        this.firebaseData = firebaseData;
+        if(!isStartUsed){
+            login();
+            isStartUsed = true;
+        }
+    }
+
     //-----------------------------
 
     /**
@@ -431,4 +506,6 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             e.printStackTrace();
         }
     }
+
+
 }

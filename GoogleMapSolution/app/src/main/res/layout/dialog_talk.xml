@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:drawable/screen_background_dark_transparent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:padding="5dp">
 
 
@@ -54,11 +56,25 @@
         android:textStyle="bold" />
 
 
+    <TextView
+        android:id="@+id/tv_online"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/btn_sent"
+        android:layout_alignEnd="@+id/btn_sent"
+        android:layout_alignRight="@+id/btn_sent"
+        android:layout_marginBottom="3dp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginRight="3dp"
+        android:textStyle="italic"
+        tools:text="線上人數 :  7/100" />
+
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/edit_text_view"
+        android:layout_above="@+id/tv_online"
         android:layout_below="@+id/tv_header"
         android:layout_marginTop="10dp"
         android:background="@drawable/shape_talk_bg"
