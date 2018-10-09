@@ -20,6 +20,7 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tv_announcement"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:layout_alignParentTop="true"
@@ -32,6 +33,7 @@
         android:ellipsize="marquee"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="-1"
         android:singleLine="true"
         android:textColor="@color/notification_center"
         android:textSize="20sp"
@@ -59,7 +61,8 @@
         android:layout_above="@+id/edit_text_view"
         android:layout_below="@+id/tv_header"
         android:layout_marginTop="10dp"
-        android:background="@drawable/shape_talk_bg" />
+        android:background="@drawable/shape_talk_bg"
+        android:overScrollMode="never" />
 
 
     <EditText

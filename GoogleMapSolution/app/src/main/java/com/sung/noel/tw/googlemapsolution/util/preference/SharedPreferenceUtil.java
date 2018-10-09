@@ -15,17 +15,22 @@ import java.util.ArrayList;
 public class SharedPreferenceUtil {
 
     @Retention(RetentionPolicy.SOURCE)
-    @StringDef({NAME_HISTORY})
+    @StringDef({NAME_HISTORY,NAME_TALK_BOARD})
     public @interface SharedPreferencesKey {
     }
 
-    ;
 
     public final static String NAME_HISTORY = "NameHistory";
     private final String KEY_HISTORY = "history";
+
+    public final static String NAME_TALK_BOARD = "TalkBoard";
+    private final String KEY_TALK_BOARD_USER_NAME = "UserName";
+
+
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Gson gson;
+
 
     public SharedPreferenceUtil(Context context, @SharedPreferencesKey String keyName) {
         gson = new Gson();
@@ -55,13 +60,36 @@ public class SharedPreferenceUtil {
         editor.putString(KEY_HISTORY, gson.toJsonTree(data).getAsJsonArray().toString()).commit();
     }
     //--------
+
     /***
      * 清除目標紀錄
      */
-    public void removeTargetHistory(int position){
+    public void removeTargetHistory(int position) {
         ArrayList<PlaceInfo.ResultsBean> data = getHistory();
         data.remove(position);
         editor.putString(KEY_HISTORY, gson.toJsonTree(data).getAsJsonArray().toString()).commit();
     }
+
+
+    //-----------------
+
+    /***
+     * 記錄使用者名稱
+     * @param userName
+     */
+    public void setUsetName(String userName) {
+        editor.putString(KEY_TALK_BOARD_USER_NAME, userName).commit();
+    }
+
+    //----------
+
+    /***
+     * 取得使用者名稱
+     * @return
+     */
+    public String getUserName() {
+        return sharedPreferences.getString(KEY_TALK_BOARD_USER_NAME,"");
+    }
+
 
 }

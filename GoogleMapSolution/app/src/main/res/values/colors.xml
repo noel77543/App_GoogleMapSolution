@@ -21,7 +21,7 @@
     <!--talk board-->
     <color name="talk_board_bg">#ad000000</color>
     <color name="talk_board_title_text">#b00000</color>
-    <color name="tank_board_user_name">#0600ba</color>
-    <color name="tank_board_user_message">#888888</color>
+    <color name="talk_board_user_name">#ffffff</color>
+    <color name="talk_board_user_message">#b6b6b6</color>
 
 </resources>
