@@ -23,6 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.sung.noel.tw.googlemapsolution.R;
+import com.sung.noel.tw.googlemapsolution.connect.VersionConnect;
 
 /**
  * Created by noel on 2017/12/5.
@@ -37,6 +38,7 @@ public abstract class BaseMapActivity extends BaseLocationActivity implements On
     //繼承此class 必然有個map
     @BindView(R.id.mapview)
     protected MapView mapview;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

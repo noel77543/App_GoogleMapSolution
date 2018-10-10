@@ -4,6 +4,6 @@
     <stroke
         android:width="2dp"
         android:color="@android:color/white"
-        android:dashGap="5dp"
+        android:dashGap="15dp"
         android:dashWidth="50dp" />
 </shape>

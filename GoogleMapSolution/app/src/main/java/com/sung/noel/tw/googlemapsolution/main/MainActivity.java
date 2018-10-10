@@ -2,7 +2,9 @@ package com.sung.noel.tw.googlemapsolution.main;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
@@ -42,11 +44,14 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import com.sung.noel.tw.googlemapsolution.BuildConfig;
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.base.BaseMapActivity;
 import com.sung.noel.tw.googlemapsolution.connect.GoogleConnect;
+import com.sung.noel.tw.googlemapsolution.connect.VersionConnect;
 import com.sung.noel.tw.googlemapsolution.event.EventCenter;
 import com.sung.noel.tw.googlemapsolution.main.adapter.MyInfoAdapter;
+import com.sung.noel.tw.googlemapsolution.main.model.VersionData;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.AddressInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DirectionInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
@@ -56,6 +61,7 @@ import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.TalkBoardDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.version.VersionDialog;
 import com.sung.noel.tw.googlemapsolution.util.firebase.analytics.MyFirebaseEventCenter;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.MyFirebaseDataBaseCenter;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.model.FirebaseData;
@@ -66,37 +72,18 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DIRECTIO
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DISTANCE;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_LOCATION;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
+import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_VERSION;
 
 /**
  * Created by noel on 2017/12/5.
  */
 
-public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, MyFirebaseDataBaseCenter.OnFirebaseDataChangeListener {
+public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMapClickListener, NavigationDrawer.OnNavigationItemClickListener, View.OnKeyListener, View.OnClickListener, MyFirebaseDataBaseCenter.OnFirebaseDataChangeListener, VersionDialog.OnAcceptListener, TalkBoardDialog.OnSuccessRegisterListener {
 
     private final float MAP_SIZE_SMALL = 12.0f;
     private final float MAP_SIZE_NORMAL = 15.5f;
     private final float MAP_SIZE_LARGE = 20.0f;
 
-
-    private Map<String, Marker> placeMarkerMap = new HashMap<>();
-    private Map<String, Integer> placeMarkerIndex = new HashMap<>();
-    private MyInfoAdapter adapter;
-    //點選的目標點位
-    private LatLng latLngTarget;
-    private Marker markerTarget;
-    private MarkerOptions optionsTarget = new MarkerOptions();
-
-    private GoogleConnect connect;
-    //用來控制infowindow 開啟或關閉
-    private boolean isInfoWindowShown = false;
-    //路線規劃
-    private Polyline polyline;
-    //drawer
-    private NavigationDrawer navigationDrawer;
-    private PlaceInfo placeInfo;
-    //劃線用 終點marker
-    private Marker destinationMarker;
-    private String markerTitle;
 
     @BindView(R.id.coordinator_layout)
     CoordinatorLayout coordinatorLayout;
@@ -115,6 +102,28 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawerLayout;
 
+
+    private Map<String, Marker> placeMarkerMap = new HashMap<>();
+    private Map<String, Integer> placeMarkerIndex = new HashMap<>();
+    private MyInfoAdapter adapter;
+    //點選的目標點位
+    private LatLng latLngTarget;
+    private Marker markerTarget;
+    private MarkerOptions optionsTarget = new MarkerOptions();
+    //用來控制infowindow 開啟或關閉
+    private boolean isInfoWindowShown = false;
+    //路線規劃
+    private Polyline polyline;
+    //drawer
+    private NavigationDrawer navigationDrawer;
+    private PlaceInfo placeInfo;
+    //劃線用 終點marker
+    private Marker destinationMarker;
+    private String markerTitle;
+
+    private GoogleConnect connect;
+    private VersionConnect versionConnect;
+    private VersionDialog versionDialog;
     private TalkBoardDialog talkBoardDialog;
     private PlaceDetailPopupWindow placeDetailPopupWindow;
     private MyFirebaseEventCenter myFirebaseEventCenter;
@@ -136,8 +145,11 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         navigationDrawer.setOnNavigationItemClickListener(this);
         adapter = new MyInfoAdapter(this);
         connect = new GoogleConnect(this);
+        versionConnect = new VersionConnect(this);
         placeDetailPopupWindow = new PlaceDetailPopupWindow(this);
         talkBoardDialog = new TalkBoardDialog(this);
+        talkBoardDialog.setOnSuccessRegisterListener(this);
+        versionDialog = new VersionDialog(this);
 
         myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_START);
         myFirebaseDataBaseCenter.setOnFirebaseDataChangeListener(this);
@@ -153,6 +165,26 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @Override
     protected void init() {
         initGoogleMapUtils();
+        connectToCheckVersion();
+    }
+
+    //-----------
+
+    /***
+     *  確認版本
+     */
+    public void connectToCheckVersion() {
+        versionConnect.connectToGetVersionData();
+    }
+
+    //---------
+
+    /***
+     * 當成功註冊
+     */
+    @Override
+    public void onSuccessRegistered() {
+        isLogin = true;
     }
 
     //-------
@@ -165,10 +197,6 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             String name = sharedPreferenceUtil.getUserName();
             //已經註冊的對象
             if (firebaseData != null && !name.equals("")) {
-                Log.e("loginTTT", "login");
-                onlineBean = new FirebaseData.OnlineBean();
-                onlineBean.setName(name);
-                onlineBean.setUuid(Settings.System.getString(getContentResolver(), Settings.System.ANDROID_ID));
                 myFirebaseDataBaseCenter.login(onlineBean, firebaseData.getOnline().size());
                 isLogin = true;
             }
@@ -183,7 +211,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     private void logout() {
         if (isLogin) {
             if (firebaseData != null) {
-                Log.e("logoutTTT", "logout");
+                Log.e("TTTTTTTTT", "TTTTTTTTTT");
                 myFirebaseDataBaseCenter.logout(onlineBean);
                 isLogin = false;
             }
@@ -224,6 +252,19 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         logout();
     }
 
+    //-------------
+
+    /***
+     * 當點選前往更新
+     */
+    @Override
+    public void onAcceptToUpdateVersion() {
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_UPDATE);
+        String appPackageName = getPackageName();
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        finish();
+    }
+
     //----------
     //EventBus
     @Subscribe
@@ -231,8 +272,15 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                //版控
+                if ((int) data.get("type") == TYPE_VERSION) {
+                    VersionData versionData = (VersionData) data.get("data");
+                    if (versionData.getVersionCode() != BuildConfig.VERSION_CODE || !versionData.getVersionName().equals(BuildConfig.VERSION_NAME)) {
+                        versionDialog.setOnAcceptListener(MainActivity.this).show();
+                    }
+                }
                 //經緯度轉地址
-                if ((int) data.get("type") == TYPE_ADDRESS) {
+                else if ((int) data.get("type") == TYPE_ADDRESS) {
                     AddressInfo addressInfo = (AddressInfo) data.get("data");
                     addTargetMarkerOnMap(latLngTarget, getAddressFormat(addressInfo.getResults()));
 
@@ -481,7 +529,10 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @Override
     public void onFirebaseDataChange(FirebaseData firebaseData) {
         this.firebaseData = firebaseData;
-        if(!isStartUsed){
+        onlineBean = new FirebaseData.OnlineBean();
+        onlineBean.setName(sharedPreferenceUtil.getUserName());
+        onlineBean.setUuid(Settings.System.getString(getContentResolver(), Settings.System.ANDROID_ID));
+        if (!isStartUsed) {
             login();
             isStartUsed = true;
         }
@@ -506,6 +557,4 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             e.printStackTrace();
         }
     }
-
-
 }

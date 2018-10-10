@@ -36,10 +36,20 @@ public class MyFirebaseEventCenter {
     public static final String ACTION_MAIN_MAP_PLACE = "地圖 - 附近商家(%s)";
     public static final String ACTION_MAIN_MAP_PLACE_DETAIL = "地圖 - 附近商家資訊";
 
+    public static final String ACTION_MAIN_TALK_BOARD_ENTER = "聊天室 - 進入";
+    public static final String ACTION_MAIN_TALK_BOARD_EXIT = "聊天室 - 關閉";
+    public static final String ACTION_MAIN_TALK_BOARD_SEND = "聊天室 - 發送訊息";
+    public static final String ACTION_MAIN_TALK_BOARD_REGISTER = "聊天室 - 註冊";
+
+
+    public static final String ACTION_MAIN_UPDATE = "更新";
+
     @StringDef({ACTION_MAIN_START, ACTION_MAIN_MAP_MARKER_REMOVE,
             ACTION_MAIN_MAP_MARKER_PUT,ACTION_MAIN_MAP_DIRECTION,
             ACTION_MAIN_MAP_ADDRESS,ACTION_MAIN_MAP_PLACE,
-            ACTION_MAIN_MAP_PLACE_DETAIL
+            ACTION_MAIN_MAP_PLACE_DETAIL,ACTION_MAIN_TALK_BOARD_ENTER,
+            ACTION_MAIN_TALK_BOARD_EXIT,ACTION_MAIN_TALK_BOARD_SEND,ACTION_MAIN_TALK_BOARD_REGISTER
+            ,ACTION_MAIN_UPDATE
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface FirebaseEvent {

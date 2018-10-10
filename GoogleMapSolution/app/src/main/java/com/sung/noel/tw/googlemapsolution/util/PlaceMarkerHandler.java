@@ -15,7 +15,7 @@ import java.util.Map;
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.main.MainActivity;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
-import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.loading.LoadingDialog;
 
 /**
  * Created by noel on 2017/12/6.
@@ -25,7 +25,7 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     private GoogleMap googleMap;
     private MainActivity activity;
     private PlaceInfo placeInfo;
-    private LoadingImageCircleDialog loadingImageCircleDialog;
+    private LoadingDialog loadingDialog;
     private Map<String, Marker> placeMarkerMap;
     private Map<String, Integer> placeMarkerIndex;
 
@@ -40,9 +40,9 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        loadingImageCircleDialog = new LoadingImageCircleDialog(activity);
-        loadingImageCircleDialog.setLoadingMessage(activity.getString(R.string.dialog_message_googlemap_place_already));
-        loadingImageCircleDialog.showLoadingDialog();
+        loadingDialog = new LoadingDialog(activity);
+        loadingDialog.setLoadingMessage(activity.getString(R.string.dialog_message_googlemap_place_already));
+        loadingDialog.showLoadingDialog();
     }
 
     @Override
@@ -73,6 +73,6 @@ public class PlaceMarkerHandler extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        loadingImageCircleDialog.dismiss();
+        loadingDialog.dismiss();
     }
 }

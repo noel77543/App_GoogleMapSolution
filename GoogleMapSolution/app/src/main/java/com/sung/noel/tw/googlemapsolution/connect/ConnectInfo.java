@@ -9,6 +9,13 @@ import android.support.annotation.StringDef;
 public class ConnectInfo {
 
     /***
+     *  版控
+     */
+    public static final String API_VERSION = "https://www.dropbox.com/s/igorutrueqdw0o5/app_googlemap_solution.json?dl=1";
+
+
+    //--------------------
+    /***
      * google play
      */
     public static final String GOOGLE_PLAY = "https://play.google.com/store/apps/details?id=com.sung.noel.tw.googlemapsolution";

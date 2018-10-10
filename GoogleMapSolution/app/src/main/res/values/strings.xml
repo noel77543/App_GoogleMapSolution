@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">GoogleMap個人使用統整</string>
-    <string name="app_name_debug">GoogleMap個人使用統整_開發版</string>
 
     <string name="title_activity_maps">Map</string>
     <string name="map_latitude">緯度：</string>
@@ -73,6 +72,9 @@
     <string name="toast_server_error_address">伺服器忙線中，無法取得地址資訊,請再試一次。</string>
     <string name="toast_server_error_place">伺服器忙線中，無法取得地方資訊,請再試一次。</string>
     <string name="toast_server_error_place_detail">伺服器忙線中，無法取得該地點詳細資訊,請再試一次。</string>
+    <string name="toast_server_error_version">伺服器忙線中，無法取得版本資訊,請再試一次。</string>
+    <string name="toast_register_success">註冊成功，開始聊天吧!</string>
+
 
     <string name="toast_server_error_distance">伺服器忙線中，無法取得距離與需時,請再試一次。</string>
     <string name="toast_googlemap_non_distance">目標地點不存在,無法取得距離與耗時。</string>
@@ -107,5 +109,8 @@
     <string name="ar_target_location">經度：%1$s\n緯度：%2$s</string>
     <string name="ar_none_sensor">此裝置不具備方向傳感器</string>
 
+    <!--version-->
+    <string name="version_checking">版本確認中...</string>
+    <string name="version_dialog_title">新版本已發布，請前往更新。</string>
 
 </resources>

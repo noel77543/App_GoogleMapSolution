@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.sung.noel.tw.googlemapsolution.main.model.VersionData;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.AddressInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DirectionInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
@@ -19,15 +20,16 @@ import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
  */
 
 public class EventCenter {
-    //連線失敗用
-    public static int EVENT_CONNECT_FAIL = 111;
 
-    public static final int TYPE_ADDRESS = 222;
-    public static final int TYPE_LOCATION = 333;
-    public static final int TYPE_DIRECTION = 444;
-    public static final int TYPE_PLACE = 555;
-    public static final int TYPE_DISTANCE = 666;
-//    public static final int TYPE_PLACE_DETAIL = 777;
+    public static final int TYPE_VERSION = 101;
+    //連線失敗用
+    public static final int EVENT_CONNECT_FAIL = 201;
+    public static final int TYPE_ADDRESS = 301;
+    public static final int TYPE_LOCATION = 302;
+    public static final int TYPE_DIRECTION = 303;
+    public static final int TYPE_PLACE = 304;
+    public static final int TYPE_DISTANCE = 305;
+//    public static final int TYPE_PLACE_DETAIL = 306;
 
 
     //--------------------------------------------------
@@ -70,9 +72,10 @@ public class EventCenter {
 
     /**
      * 經緯度轉地址
+     *
      * @param addressInfo 地址
-     * */
-    public void sendAddress(int type, AddressInfo addressInfo){
+     */
+    public void sendAddress(int type, AddressInfo addressInfo) {
         sendObjectEvent(type, addressInfo);
 
     }
@@ -81,10 +84,11 @@ public class EventCenter {
 
     /**
      * 地址轉經緯度
+     *
      * @param address 地址
-     * */
-    public void sendLocation(int type,LatLng address){
-        sendObjectEvent(type,address);
+     */
+    public void sendLocation(int type, LatLng address) {
+        sendObjectEvent(type, address);
 
     }
 
@@ -92,17 +96,16 @@ public class EventCenter {
 
     /**
      * 最佳路線規劃
-     *
-     * */
-    public void sendRoute(int type, DirectionInfo directionInfo){
+     */
+    public void sendRoute(int type, DirectionInfo directionInfo) {
         sendObjectEvent(type, directionInfo);
     }
     //--------------------------------------------------
 
     /**
      * 地方資訊
-     * */
-    public void sendPlace(int type, PlaceInfo placeInfo){
+     */
+    public void sendPlace(int type, PlaceInfo placeInfo) {
         sendObjectEvent(type, placeInfo);
     }
 //    //--------------------------------------------------
@@ -120,7 +123,15 @@ public class EventCenter {
      * @param type
      * @param distanceInfo
      */
-    public void sendDistance(int type, DistanceInfo distanceInfo){
+    public void sendDistance(int type, DistanceInfo distanceInfo) {
         sendObjectEvent(type, distanceInfo);
+    }
+
+    //--------
+    /***
+     * 版本資訊
+     */
+    public void sendVersionData(int type, VersionData versionData){
+        sendObjectEvent(type,versionData);
     }
 }

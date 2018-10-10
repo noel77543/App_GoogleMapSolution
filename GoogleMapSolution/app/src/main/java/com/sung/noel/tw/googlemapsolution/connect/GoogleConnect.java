@@ -55,22 +55,22 @@ public class GoogleConnect extends BaseConnect {
      */
     public void connectToGetAddress(final double latitude, final double longitude) {
 
-        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
+        loadingDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
-            loadingImageCircleDialog.showLoadingDialog();
+            loadingDialog.showLoadingDialog();
             String url = MessageFormat.format(ConnectInfo.API_GOOGLE_GEOCODE, latitude + "," + longitude, "zh-TW");
             request = new Request.Builder().url(url).get().build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    loadingImageCircleDialog.dismiss();
+                    loadingDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_address));
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
 
-                    loadingImageCircleDialog.dismiss();
+                    loadingDialog.dismiss();
                     reader = response.body().charStream();
                     addressInfo = gson.fromJson(reader, AddressInfo.class);
                     EventCenter.getInstance().sendAddress(TYPE_ADDRESS, addressInfo);
@@ -152,9 +152,9 @@ public class GoogleConnect extends BaseConnect {
         int radius = 500;
         String language = "zh-tw";
         String key = context.getString(R.string.google_maps_key);
-        loadingImageCircleDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
+        loadingDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_place));
         if (isNetWorkable()) {
-            loadingImageCircleDialog.showLoadingDialog();
+            loadingDialog.showLoadingDialog();
             String url = MessageFormat.format(ConnectInfo.API_GOOGLE_PLACE, location, radius, type, language, key);
 
             Log.e("TTT",url);
@@ -162,13 +162,13 @@ public class GoogleConnect extends BaseConnect {
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    loadingImageCircleDialog.dismiss();
+                    loadingDialog.dismiss();
                     EventCenter.getInstance().sendConnectErrorEvent(context.getString(R.string.toast_server_error_place));
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-                    loadingImageCircleDialog.dismiss();
+                    loadingDialog.dismiss();
                     reader = response.body().charStream();
                     placeInfo = gson.fromJson(reader, PlaceInfo.class);
                     if (placeInfo.getStatus().equals("OK")) {

@@ -1,4 +1,4 @@
-package com.sung.noel.tw.googlemapsolution.util.dialog;
+package com.sung.noel.tw.googlemapsolution.util.dialog.loading;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
  * Created by noel on 2017/11/4.
  */
 
-public class LoadingImageCircleDialog extends Dialog implements DialogInterface.OnDismissListener{
+public class LoadingDialog extends Dialog implements DialogInterface.OnDismissListener{
     @BindView(R.id.imageView)
     ImageView imageView;
     @BindView(R.id.textView)
@@ -30,7 +30,7 @@ public class LoadingImageCircleDialog extends Dialog implements DialogInterface.
     private Animation animation;
     //使動畫速率始終如一
     private LinearInterpolator linearInterpolator;
-    public LoadingImageCircleDialog(Context context) {
+    public LoadingDialog(Context context) {
         super(context);
         setContentView(R.layout.dialog_load);
         ButterKnife.bind(this);

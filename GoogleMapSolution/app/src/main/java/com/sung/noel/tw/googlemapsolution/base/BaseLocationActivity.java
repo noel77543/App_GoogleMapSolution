@@ -28,7 +28,8 @@ import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
 import com.sung.noel.tw.googlemapsolution.R;
-import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
+import com.sung.noel.tw.googlemapsolution.connect.VersionConnect;
+import com.sung.noel.tw.googlemapsolution.util.dialog.loading.LoadingDialog;
 
 /**
  * Created by noel on 2017/12/5.
@@ -45,9 +46,10 @@ public abstract class BaseLocationActivity extends FragmentActivity implements
     public GoogleApiClient googleApiClient;
     // Location請求物件
     private LocationRequest locationRequest;
-    private LoadingImageCircleDialog loadingImageCircleDialog;
+    private LoadingDialog loadingDialog;
     private boolean isFirstIn = true;
     private Location userLocation;
+
 
     @NeedsPermission({Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
     void AllowedGetMyLocation() {
@@ -81,9 +83,9 @@ public abstract class BaseLocationActivity extends FragmentActivity implements
      * 檢查權限
      **/
     public void getLocationPermissionsWithCheck() {
-        loadingImageCircleDialog = new LoadingImageCircleDialog(this);
-        loadingImageCircleDialog.setLoadingMessage(this.getString(R.string.dialog_message_googlemap_location));
-        loadingImageCircleDialog.showLoadingDialog();
+        loadingDialog = new LoadingDialog(this);
+        loadingDialog.setLoadingMessage(this.getString(R.string.dialog_message_googlemap_location));
+        loadingDialog.showLoadingDialog();
         BaseLocationActivityPermissionsDispatcher.AllowedGetMyLocationWithCheck(this);
     }
 
@@ -196,7 +198,7 @@ public abstract class BaseLocationActivity extends FragmentActivity implements
                 onLocationChangeListener.onLocationChange(location);
             }
         }
-        loadingImageCircleDialog.dismiss();
+        loadingDialog.dismiss();
     }
     //-------------
 
@@ -204,7 +206,7 @@ public abstract class BaseLocationActivity extends FragmentActivity implements
     public void onConnectionSuspended(int i) {
         // Google Services連線中斷
         // int參數是連線中斷的代號
-        loadingImageCircleDialog.dismiss();
+        loadingDialog.dismiss();
         Toast.makeText(this, String.format(getString(R.string.toast_googlemap_connect_error), i + ""),
                 Toast.LENGTH_LONG).show();
     }
@@ -215,7 +217,7 @@ public abstract class BaseLocationActivity extends FragmentActivity implements
      */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        loadingImageCircleDialog.dismiss();
+        loadingDialog.dismiss();
         // ConnectionResult參數是連線失敗的資訊
         int errorCode = connectionResult.getErrorCode();
         // 裝置沒有安裝Google Play服務

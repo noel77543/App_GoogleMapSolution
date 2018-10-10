@@ -18,6 +18,7 @@ import com.sung.noel.tw.googlemapsolution.main.MainActivity;
 import com.sung.noel.tw.googlemapsolution.util.TimeUtil;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.adapter.TalkAdapter;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.register.RegisterDialog;
+import com.sung.noel.tw.googlemapsolution.util.firebase.analytics.MyFirebaseEventCenter;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.model.FirebaseData;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.MyFirebaseDataBaseCenter;
 import com.sung.noel.tw.googlemapsolution.util.preference.SharedPreferenceUtil;
@@ -28,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.OnFirebaseDataChangeListener {
+public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.OnFirebaseDataChangeListener, RegisterDialog.OnSuccessRegisterListener {
 
 
     @BindView(R.id.recycler_view)
@@ -44,7 +45,7 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
     @BindView(R.id.tv_online)
     TextView tvOnline;
 
-
+    private OnSuccessRegisterListener onSuccessRegisterListener;
     private MyFirebaseDataBaseCenter myFirebaseDataBaseCenter;
     private TalkAdapter talkAdapter;
     private FirebaseData firebaseData;
@@ -52,12 +53,15 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
     private RegisterDialog registerDialog;
     private TimeUtil timeUtil;
     private Context context;
+    private MyFirebaseEventCenter myFirebaseEventCenter;
 
     public TalkBoardDialog(@NonNull Context context) {
         super(context);
         setContentView(R.layout.dialog_talk);
         ButterKnife.bind(this);
         this.context = context;
+        myFirebaseEventCenter = new MyFirebaseEventCenter(context);
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_TALK_BOARD_ENTER);
         init();
     }
 
@@ -67,6 +71,7 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
         registerDialog = new RegisterDialog(context);
         sharedPreferenceUtil = new SharedPreferenceUtil(context, SharedPreferenceUtil.NAME_TALK_BOARD);
         talkAdapter = new TalkAdapter(context);
+        registerDialog.setOnSuccessRegisterListener(this);
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(talkAdapter);
         myFirebaseDataBaseCenter = new MyFirebaseDataBaseCenter();
@@ -95,6 +100,7 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
                             editTextView.setText("");
                             hideKeyboard((MainActivity) context);
                             tvAnnouncement.requestFocus();
+                            myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_TALK_BOARD_SEND);
                         }
                     }
                     //如果還沒註冊
@@ -105,6 +111,7 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
                 break;
             //關閉
             case R.id.btn_close:
+                myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_TALK_BOARD_EXIT);
                 dismiss();
                 break;
         }
@@ -129,8 +136,8 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
             this.firebaseData = firebaseData;
             talkAdapter.setData(firebaseData.getBoard());
             tvAnnouncement.setText(firebaseData.getAnnouncement());
-            //online 需要-1 因為有一個是作為模組的存在 並非真實使用者
-            tvOnline.setText(String.format(context.getString(R.string.talk_online), firebaseData.getOnline().size() - 1, firebaseData.getRegister().size()));
+            //online 跟 register 需要-1 因為有一個是作為模組的存在 並非真實使用者
+            tvOnline.setText(String.format(context.getString(R.string.talk_online), firebaseData.getOnline().size() - 1, firebaseData.getRegister().size()-1));
         }
     }
 
@@ -165,4 +172,20 @@ public class TalkBoardDialog extends Dialog implements MyFirebaseDataBaseCenter.
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
+
+    @Override
+    public void onSuccessRegistered() {
+        myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_TALK_BOARD_REGISTER);
+        onSuccessRegisterListener.onSuccessRegistered();
+    }
+
+    //---------
+    public interface OnSuccessRegisterListener {
+        void onSuccessRegistered();
+    }
+
+    public void setOnSuccessRegisterListener(OnSuccessRegisterListener onSuccessRegisterListener) {
+        this.onSuccessRegisterListener = onSuccessRegisterListener;
+    }
+
 }

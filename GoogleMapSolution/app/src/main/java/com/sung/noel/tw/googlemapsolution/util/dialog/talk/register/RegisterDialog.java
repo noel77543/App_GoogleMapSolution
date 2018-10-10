@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.sung.noel.tw.googlemapsolution.R;
 import com.sung.noel.tw.googlemapsolution.util.TimeUtil;
+import com.sung.noel.tw.googlemapsolution.util.dialog.talk.TalkBoardDialog;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.MyFirebaseDataBaseCenter;
 import com.sung.noel.tw.googlemapsolution.util.firebase.database.model.FirebaseData;
 import com.sung.noel.tw.googlemapsolution.util.preference.SharedPreferenceUtil;
@@ -32,6 +33,7 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
     private MyFirebaseDataBaseCenter myFirebaseDataBaseCenter;
     private TimeUtil timeUtil;
     private SharedPreferenceUtil sharedPreferenceUtil;
+    private OnSuccessRegisterListener onSuccessRegisterListener;
 
     public RegisterDialog(@NonNull Context context) {
         super(context);
@@ -55,11 +57,17 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
     @OnClick({R.id.btn_register})
     public void onViewClicked(View view) {
         String name = editText.getText().toString();
-        //如若該名稱允許註冊
+        //如若該名稱允許註冊  則進行註冊並登入
         if (isAllowedName(name)) {
-            myFirebaseDataBaseCenter.registerUser(getUserData(name),firebaseData.getRegister().size());
+            myFirebaseDataBaseCenter.registerUser(getUserData(name), firebaseData.getRegister().size());
+            FirebaseData.OnlineBean onlineBean = new FirebaseData.OnlineBean();
+            onlineBean.setName(name);
+            onlineBean.setUuid(Settings.System.getString(getContext().getContentResolver(), Settings.System.ANDROID_ID));
+            myFirebaseDataBaseCenter.login(onlineBean, firebaseData.getOnline().size());
             sharedPreferenceUtil.setUsetName(name);
             dismiss();
+            Toast.makeText(getContext(), getContext().getString(R.string.toast_register_success), Toast.LENGTH_SHORT).show();
+            onSuccessRegisterListener.onSuccessRegistered();
         }
     }
     //---------------
@@ -106,5 +114,15 @@ public class RegisterDialog extends Dialog implements MyFirebaseDataBaseCenter.O
     @Override
     public void onFirebaseDataChange(FirebaseData firebaseData) {
         this.firebaseData = firebaseData;
+    }
+
+
+    //---------
+    public interface OnSuccessRegisterListener {
+        void onSuccessRegistered();
+    }
+
+    public void setOnSuccessRegisterListener(OnSuccessRegisterListener onSuccessRegisterListener) {
+        this.onSuccessRegisterListener = onSuccessRegisterListener;
     }
 }

@@ -5,8 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.google.gson.Gson;
-import com.sung.noel.tw.googlemapsolution.BuildConfig;
-import com.sung.noel.tw.googlemapsolution.util.dialog.LoadingImageCircleDialog;
+import com.sung.noel.tw.googlemapsolution.util.dialog.loading.LoadingDialog;
 
 import java.io.Reader;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +15,7 @@ import okhttp3.Request;
 
 public class BaseConnect {
     protected OkHttpClient client;
-    protected LoadingImageCircleDialog loadingImageCircleDialog;
+    protected LoadingDialog loadingDialog;
     protected Request request;
     protected Gson gson;
     protected Reader reader;
@@ -28,7 +27,7 @@ public class BaseConnect {
     public BaseConnect(Context context) {
         this.context = context;
         gson = new Gson();
-        loadingImageCircleDialog = new LoadingImageCircleDialog(context);
+        loadingDialog = new LoadingDialog(context);
         client = new OkHttpClient.Builder()
                 .connectTimeout(TIME_OUT, TimeUnit.MILLISECONDS)
                 .build();
