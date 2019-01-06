@@ -26,9 +26,8 @@ public class ConnectInfo {
     private final static String DOMAIN_GOOGLE_API = "https://maps.googleapis.com/maps/api/";
 
     //-------
-
     //經緯度轉地址
-    public static final String API_GOOGLE_GEOCODE = DOMAIN_GOOGLE_API + "geocode/json?latlng={0}&language={1}";
+    public static final String API_GOOGLE_GEOCODE = DOMAIN_GOOGLE_MAP + "geocode/json?latlng={0}&language={1}&key={2}";
 
 
     //-------

@@ -58,7 +58,7 @@ public class GoogleConnect extends BaseConnect {
         loadingDialog.setLoadingMessage(context.getString(R.string.dialog_message_googlemap_getaddress));
         if (isNetWorkable()) {
             loadingDialog.showLoadingDialog();
-            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_GEOCODE, latitude + "," + longitude, "zh-TW");
+            String url = MessageFormat.format(ConnectInfo.API_GOOGLE_GEOCODE, latitude + "," + longitude, "zh-TW",context.getString(R.string.google_maps_key));
             request = new Request.Builder().url(url).get().build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
@@ -68,7 +68,7 @@ public class GoogleConnect extends BaseConnect {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(Call call, Response response)  {
 
                     loadingDialog.dismiss();
                     reader = response.body().charStream();
@@ -123,6 +123,7 @@ public class GoogleConnect extends BaseConnect {
 
         if (isNetWorkable()) {
             String url = MessageFormat.format(ConnectInfo.API_GOOGLE_DIRECTION, origin, destination, mode, key, "zh-TW");
+
             request = new Request.Builder().url(url).get().build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
@@ -131,7 +132,7 @@ public class GoogleConnect extends BaseConnect {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(Call call, Response response)  {
                     reader = response.body().charStream();
                     directionInfo = gson.fromJson(reader, DirectionInfo.class);
                     EventCenter.getInstance().sendRoute(TYPE_DIRECTION, directionInfo);
@@ -167,7 +168,7 @@ public class GoogleConnect extends BaseConnect {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(Call call, Response response)  {
                     loadingDialog.dismiss();
                     reader = response.body().charStream();
                     placeInfo = gson.fromJson(reader, PlaceInfo.class);
@@ -251,7 +252,7 @@ public class GoogleConnect extends BaseConnect {
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(Call call, Response response)  {
                     reader = response.body().charStream();
                     distanceInfo = gson.fromJson(reader, DistanceInfo.class);
                     if (distanceInfo.getStatus().equals("OK")) {

@@ -7,22 +7,12 @@ android {
         applicationId "com.sung.noel.tw.googlemapsolution"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 5
-        versionName "1.1.0"
+        versionCode 6
+        versionName "1.1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
-//        debug {
-//            //使debug 的package 後贅加入debug
-//            applicationIdSuffix ".debug"
-//            resValue "string", "app_name", "@string/app_name_debug"
-//            minifyEnabled false
-//            shrinkResources false
-//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//
-//        }
         release {
-//            resValue "string", "app_name", "@string/app_name"
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

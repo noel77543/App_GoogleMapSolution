@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GoogleMap個人使用統整</string>
+    <string name="app_name">MapSolution</string>
 
     <string name="title_activity_maps">Map</string>
     <string name="map_latitude">緯度：</string>
