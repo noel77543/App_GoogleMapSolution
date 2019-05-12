@@ -5,10 +5,10 @@ android {
     buildToolsVersion "27.0.3"
     defaultConfig {
         applicationId "com.sung.noel.tw.googlemapsolution"
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 26
-        versionCode 6
-        versionName "1.1.1"
+        versionCode 9
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -26,7 +26,11 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:26.1.0'
+
+
+    //JSOUP
+    compile 'org.jsoup:jsoup:1.11.3'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //map
     compile 'com.google.maps.android:android-maps-utils:0.4.+'
@@ -35,21 +39,25 @@ dependencies {
     //place
     compile 'com.google.android.gms:play-services-places:16.0.0'
     //Firebase Cloud Message
-    compile 'com.google.firebase:firebase-messaging:17.3.3'
+    compile 'com.google.firebase:firebase-messaging:17.3.4'
     //Firebase Crashlytics
-    compile 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    compile 'com.crashlytics.sdk.android:crashlytics:2.9.8'
     //Firebase Analytics
-    compile 'com.google.firebase:firebase-core:16.0.4'
+    compile 'com.google.firebase:firebase-core:16.0.6'
     //Firebase Database
-    compile 'com.google.firebase:firebase-database:16.0.3'
+    compile 'com.google.firebase:firebase-database:16.0.5'
+    //Firebase ML kit
+    compile 'com.google.firebase:firebase-ml-vision:18.0.2'
+    //Firebase ML kit 人臉辨識模組
+    compile 'com.google.firebase:firebase-ml-vision-face-model:17.0.2'
     //design
     compile 'com.android.support:design:25.0.0'
     //Gson
-    compile 'com.google.code.gson:gson:2.8.0'
+    compile 'com.google.code.gson:gson:2.8.5'
     //glide
     compile 'com.github.bumptech.glide:glide:3.7.0'
     //butterknife
-    compile 'com.jakewharton:butterknife:8.4.0'
+    compile 'com.jakewharton:butterknife:8.8.1'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
     //event bus
     compile 'org.greenrobot:eventbus:3.0.0'

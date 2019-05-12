@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,7 +17,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
@@ -58,6 +58,7 @@ import com.sung.noel.tw.googlemapsolution.main.model.googlemap.DistanceInfo;
 import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 import com.sung.noel.tw.googlemapsolution.navigation.NavigationDrawer;
 import com.sung.noel.tw.googlemapsolution.navigation.model.NavigationData;
+import com.sung.noel.tw.googlemapsolution.util.PhoneUtil;
 import com.sung.noel.tw.googlemapsolution.util.PlaceDetailPopupWindow;
 import com.sung.noel.tw.googlemapsolution.util.PlaceMarkerHandler;
 import com.sung.noel.tw.googlemapsolution.util.dialog.talk.TalkBoardDialog;
@@ -73,6 +74,7 @@ import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_DISTANCE
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_LOCATION;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_PLACE;
 import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_VERSION;
+import static com.sung.noel.tw.googlemapsolution.event.EventCenter.TYPE_VERSION_ON_GOOGLE_PLAY;
 
 /**
  * Created by noel on 2017/12/5.
@@ -95,14 +97,14 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     Button btnFocus;
     @BindView(R.id.btn_reload)
     Button btnReload;
-    @BindView(R.id.imageview)
-    ImageView imageview;
+
     @BindView(R.id.listview)
     public ListView listview;
     @BindView(R.id.drawer_layout)
     public DrawerLayout drawerLayout;
 
-
+    private VersionData versionData;
+    private PhoneUtil phoneUtil;
     private Map<String, Marker> placeMarkerMap = new HashMap<>();
     private Map<String, Integer> placeMarkerIndex = new HashMap<>();
     private MyInfoAdapter adapter;
@@ -138,6 +140,9 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        phoneUtil = new PhoneUtil(this);
         sharedPreferenceUtil = new SharedPreferenceUtil(this, SharedPreferenceUtil.NAME_TALK_BOARD);
         myFirebaseDataBaseCenter = new MyFirebaseDataBaseCenter();
         myFirebaseEventCenter = new MyFirebaseEventCenter(this);
@@ -151,11 +156,14 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
         talkBoardDialog.setOnSuccessRegisterListener(this);
         versionDialog = new VersionDialog(this);
 
+
+        phoneUtil.setStatusBarColor(this, android.R.color.transparent);
         myFirebaseEventCenter.sentEvent(MyFirebaseEventCenter.VIEW_MAIN, MyFirebaseEventCenter.CLASS_MAIN, MyFirebaseEventCenter.ACTION_MAIN_START);
         myFirebaseDataBaseCenter.setOnFirebaseDataChangeListener(this);
         edit.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
         edit.setOnKeyListener(this);
     }
+
 
     @Override
     protected int getContentViewId() {
@@ -165,16 +173,24 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     @Override
     protected void init() {
         initGoogleMapUtils();
-        connectToCheckVersion();
+        connectToGetVersionData();
     }
 
     //-----------
 
     /***
-     *  確認版本
+     *  取得版控資訊
      */
-    public void connectToCheckVersion() {
+    public void connectToGetVersionData() {
         versionConnect.connectToGetVersionData();
+    }
+    //-----------
+
+    /***
+     *  取得最新版本名稱
+     */
+    public void connectToGetVersionOnGooglePlay() {
+        versionConnect.connectToGetVersionOnGooglePlay();
     }
 
     //---------
@@ -211,7 +227,6 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
     private void logout() {
         if (isLogin) {
             if (firebaseData != null) {
-                Log.e("TTTTTTTTT", "TTTTTTTTTT");
                 myFirebaseDataBaseCenter.logout(onlineBean);
                 isLogin = false;
             }
@@ -274,9 +289,16 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             public void run() {
                 //版控
                 if ((int) data.get("type") == TYPE_VERSION) {
-                    VersionData versionData = (VersionData) data.get("data");
-                    if (versionData.getVersionCode() != BuildConfig.VERSION_CODE || !versionData.getVersionName().equals(BuildConfig.VERSION_NAME)) {
-                        versionDialog.setOnAcceptListener(MainActivity.this).show();
+                    versionData = (VersionData) data.get("data");
+                    connectToGetVersionOnGooglePlay();
+                }
+                //google play上的version name
+                else if ((int) data.get("type") == TYPE_VERSION_ON_GOOGLE_PLAY) {
+                    if (!checkVersionName((String) data.get("data"))) {
+                        //TODO 這裡以後可以更改結構 加入 type for 強制更新 非強制更新 不提醒更新等行為
+                        if (versionData.getVersionCode() != BuildConfig.VERSION_CODE || !versionData.getVersionName().equals(BuildConfig.VERSION_NAME)) {
+                            versionDialog.setOnAcceptListener(MainActivity.this).show();
+                        }
                     }
                 }
                 //經緯度轉地址
@@ -325,6 +347,27 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             }
         });
 
+    }
+    //----------------------------
+
+    /***
+     * 檢測版本名稱
+     * @param googlePlayVersionName
+     * @return
+     */
+    private boolean checkVersionName(String googlePlayVersionName) {
+        String[] currentVersionNameArray = BuildConfig.VERSION_NAME.split("\\.");
+        String[] googlePlayVersionNameArray = googlePlayVersionName.split("\\.");
+
+        for (int i = 0; i < currentVersionNameArray.length; i++) {
+            Log.e("C"+i,""+currentVersionNameArray[i]);
+            Log.e("G"+i,""+googlePlayVersionNameArray[i]);
+
+            if (Integer.parseInt(currentVersionNameArray[i]) < Integer.parseInt(googlePlayVersionNameArray[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 
     //----------------------------
@@ -483,7 +526,7 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
 
 
     //----------
-    @OnClick({R.id.btn_focus, R.id.btn_reload, R.id.btn_talk})
+    @OnClick({R.id.btn_focus, R.id.btn_reload, R.id.btn_talk, R.id.btn_menu})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             //定位
@@ -499,10 +542,19 @@ public class MainActivity extends BaseMapActivity implements GoogleMap.OnInfoWin
             case R.id.btn_talk:
                 talkBoardDialog.showDialog();
                 break;
+            //菜單
+            case R.id.btn_menu:
+                //如果菜單是打開的
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                }
+                //關閉的
+                else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+                break;
         }
     }
-
-    //--------
 
     /**
      * snackbar用

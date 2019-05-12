@@ -1,6 +1,5 @@
 package com.sung.noel.tw.googlemapsolution.connect;
 
-import android.support.annotation.StringDef;
 
 /**
  * Created by noel on 2017/8/17.

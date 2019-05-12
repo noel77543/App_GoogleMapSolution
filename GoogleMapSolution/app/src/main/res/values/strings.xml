@@ -111,6 +111,7 @@
 
     <!--version-->
     <string name="version_checking">版本確認中...</string>
+    <string name="version_data">取得版本資訊...</string>
     <string name="version_dialog_title">新版本已發布，請前往更新。</string>
 
 </resources>

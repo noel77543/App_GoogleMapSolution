@@ -10,14 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            app:srcCompat="@drawable/common_full_open_on_phone" />
-
         <com.google.android.gms.maps.MapView
             android:id="@+id/mapview"
             android:layout_width="match_parent"
@@ -28,9 +20,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
-            android:layout_marginTop="30sp"
             android:layout_marginLeft="20sp"
             android:layout_marginRight="20sp"
+            android:layout_marginTop="30sp"
             android:completionThreshold="1"
             android:hint="@string/hint_edit"
             android:imeOptions="actionDone"
@@ -39,12 +31,21 @@
             android:paddingRight="50dp"
             android:textSize="15sp" />
 
-        <LinearLayout
+
+        <Button
+            android:id="@+id/btn_menu"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:background="@drawable/ic_menu"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="30sp" />
+
+        <RelativeLayout
             android:layout_width="50dp"
-            android:layout_height="130dp"
+            android:layout_height="match_parent"
             android:layout_gravity="end|bottom"
             android:background="@android:color/transparent"
-            android:gravity="center"
             android:orientation="vertical"
             android:paddingBottom="10dp"
             android:paddingEnd="5dp"
@@ -53,10 +54,12 @@
             android:paddingStart="5dp"
             android:paddingTop="5dp">
 
+
             <Button
                 android:id="@+id/btn_talk"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_above="@+id/btn_focus"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/ic_talk" />
 
@@ -64,23 +67,28 @@
                 android:id="@+id/btn_focus"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
+                android:layout_above="@+id/btn_reload"
                 android:layout_marginBottom="5dp"
                 android:background="@drawable/ic_focus" />
 
             <Button
                 android:id="@+id/btn_reload"
-                android:layout_marginTop="5dp"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginTop="5dp"
                 android:background="@drawable/ic_reload" />
-        </LinearLayout>
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 
     <ListView
+        android:paddingTop="30dp"
         android:id="@+id/listview"
         android:layout_width="150dp"
         android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_gravity="start"
         android:alpha="0.7"
         android:background="@color/loading_dialog_text_color"

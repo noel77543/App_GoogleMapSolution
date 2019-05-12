@@ -22,6 +22,7 @@ import com.sung.noel.tw.googlemapsolution.main.model.googlemap.PlaceInfo;
 public class EventCenter {
 
     public static final int TYPE_VERSION = 101;
+    public static final int TYPE_VERSION_ON_GOOGLE_PLAY = 102;
     //連線失敗用
     public static final int EVENT_CONNECT_FAIL = 201;
     public static final int TYPE_ADDRESS = 301;
@@ -133,5 +134,13 @@ public class EventCenter {
      */
     public void sendVersionData(int type, VersionData versionData){
         sendObjectEvent(type,versionData);
+    }
+    //--------
+
+    /***
+     * GooglePlay上的版本
+     */
+    public void sendVersionNameOnGooglePlay(int type, String versionName){
+        sendObjectEvent(type,versionName);
     }
 }
